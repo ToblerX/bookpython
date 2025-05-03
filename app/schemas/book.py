@@ -1,6 +1,7 @@
 import datetime
 from pydantic import BaseModel
 
+
 class BookModel(BaseModel):
     id: int
     name: str
@@ -12,6 +13,7 @@ class BookModel(BaseModel):
     class Config:
         arbitrary_types_allowed = True
         from_attributes = True
+
 
 class BookCreate(BaseModel):
     name: str
