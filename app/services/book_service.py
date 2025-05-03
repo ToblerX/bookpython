@@ -1,6 +1,6 @@
 from sqlalchemy import func, asc, desc
 from sqlalchemy.orm import Session
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from typing import Annotated
 from app import db as app_db
 from app import schemas
@@ -28,3 +28,19 @@ def get_books(
         .limit(pagination.limit)
         .all()
     )
+
+
+def delete_book(
+    book: schemas.BookId,
+    current_session: Session,
+):
+    del_book = (
+        current_session.query(app_db.models.Book)
+        .filter(app_db.models.Book.id == book.id)
+        .first()
+    )
+    if not del_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    current_session.delete(del_book)
+    current_session.commit()
+    return del_book

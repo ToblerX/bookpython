@@ -19,3 +19,7 @@ class BookCreate(BaseModel):
     name: str
     author: str
     description: str
+
+
+class BookId(BaseModel):
+    id: int

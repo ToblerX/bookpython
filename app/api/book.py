@@ -22,3 +22,10 @@ async def get_books(
     pagination: schemas.Pagination = Depends(),
 ):
     return services.get_books(pagination, sorting, current_session)
+
+
+@book_router.delete("/books", tags=["Books"], response_model=schemas.BookModel)
+async def delete_book(
+    book: schemas.BookId, current_session: Session = Depends(app_db.get_db)
+):
+    return services.delete_book(book, current_session)
