@@ -16,33 +16,6 @@ ENV/
 # PyCharm
 .idea/
 
-# Docker files
-Dockerfile
-docker-compose.yml
-
-# Python distribution
-dist/
-build/
-*.egg-info/
-
-# Test and coverage
-.coverage
-nosetests.xml
-coverage.xml
-*.cover
-
-# Jupyter Notebook
-.ipynb_checkpoints/
-
-# macOS
-.DS_Store
-
-# Windows
-Thumbs.db
-
-# IDE configuration files
-.vscode/
-
 # Node.js (if you have any JS-based front-end tools like React)
 node_modules/
 npm-debug.log
@@ -51,3 +24,7 @@ yarn-error.log
 
 # Environment variables
 .env
+
+# Alembic configuration and migrations
+alembic.ini
+app/db/migrations

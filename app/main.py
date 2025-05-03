@@ -1,5 +1,8 @@
 from fastapi import FastAPI
-from .api import book_router, user_router
+from . import api
+import app.db as database
+
+database.Base.metadata.create_all(bind=database.engine)
 app = FastAPI(
     title="Book Python API",
     description="API to handle operations in a book shop.",
@@ -11,5 +14,7 @@ app = FastAPI(
     ],
 )
 
-app.include_router(book_router)
-app.include_router(user_router)
+
+
+app.include_router(api.book_router)
+app.include_router(api.user_router)
