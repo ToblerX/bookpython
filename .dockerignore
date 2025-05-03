@@ -1,2 +1,28 @@
-.venv
-.idea
+# Ignore virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Ignore PyCharm project files
+.idea/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore Dockerfiles
+Dockerfile
+docker-compose.yml
+
+# Ignore build and dist directories
+dist/
+build/
+*.egg-info/
+
+# Node.js modules (if any)
+node_modules/
+
+# Ignore local configuration files (like .env)
+.env

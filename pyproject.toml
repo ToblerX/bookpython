@@ -1,6 +1,6 @@
 [project]
 name = "bookpython"
-version = "0.1.1"
+version = "0.1.2"
 description = ""
 authors = [
     {name = "ToblerX",email = "super.yaroslav05@gmail.com"}
