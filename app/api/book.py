@@ -29,3 +29,10 @@ async def delete_book(
     book: schemas.BookId, current_session: Session = Depends(app_db.get_db)
 ):
     return services.delete_book(book, current_session)
+
+
+@book_router.put("/books", tags=["Books"], response_model=schemas.BookModel)
+async def update_book(
+    book: schemas.BookUpdate, current_session: Session = Depends(app_db.get_db)
+):
+    return services.update_book(book, current_session)

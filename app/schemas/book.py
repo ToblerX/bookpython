@@ -1,5 +1,6 @@
 import datetime
 from pydantic import BaseModel
+from typing import Optional
 
 
 class BookModel(BaseModel):
@@ -23,3 +24,9 @@ class BookCreate(BaseModel):
 
 class BookId(BaseModel):
     id: int
+
+
+class BookUpdate(BookId):
+    name: Optional[str] = None
+    author: Optional[str] = None
+    description: Optional[str] = None

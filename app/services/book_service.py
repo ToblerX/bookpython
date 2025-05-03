@@ -44,3 +44,18 @@ def delete_book(
     current_session.delete(del_book)
     current_session.commit()
     return del_book
+
+
+def update_book(book: schemas.BookUpdate, current_session: Session):
+    upd_book = (
+        current_session.query(app_db.models.Book)
+        .filter(app_db.models.Book.id == book.id)
+        .first()
+    )
+    if not upd_book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    for key, value in book.dict(exclude_unset=True).items():
+        setattr(upd_book, key, value)
+    current_session.commit()
+    current_session.refresh(upd_book)
+    return upd_book
