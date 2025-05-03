@@ -1,4 +1,7 @@
+from sqlalchemy import func, asc, desc
 from sqlalchemy.orm import Session
+from fastapi import Depends
+from typing import Annotated
 from app import db as app_db
 from app import schemas
 
@@ -11,5 +14,17 @@ def create_book(book: schemas.BookCreate, current_session: Session):
     return new_book
 
 
-def get_books(current_session: Session):
-    return current_session.query(app_db.models.Book).all()
+def get_books(
+    pagination: schemas.Pagination,
+    sorting: Annotated[schemas.SortingBooks, Depends()],
+    current_session: Session,
+):
+    sort_column = func.lower(getattr(app_db.models.Book, sorting.sort_by))
+    sort_order = asc(sort_column) if sorting.order == "asc" else desc(sort_column)
+    return (
+        current_session.query(app_db.models.Book)
+        .order_by(sort_order)
+        .offset(pagination.skip)
+        .limit(pagination.limit)
+        .all()
+    )

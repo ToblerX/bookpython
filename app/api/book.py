@@ -16,5 +16,9 @@ async def create_book(
 
 
 @book_router.get("/books", tags=["Books"], response_model=List[schemas.BookModel])
-async def get_books(current_session: Session = Depends(app_db.get_db)):
-    return services.get_books(current_session)
+async def get_books(
+    current_session: Session = Depends(app_db.get_db),
+    sorting: schemas.SortingBooks = Depends(),
+    pagination: schemas.Pagination = Depends(),
+):
+    return services.get_books(pagination, sorting, current_session)
