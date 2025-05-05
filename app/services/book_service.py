@@ -48,13 +48,17 @@ def get_books(
     )
 
 
-def delete_book(
-    book: schemas.BookId,
+def get_book_by_id(book_id: int, current_session: Session):
+    return current_session.query(app_db.models.Book).get(book_id)
+
+
+def delete_book_by_id(
+    book_id: int,
     current_session: Session,
 ):
     del_book = (
         current_session.query(app_db.models.Book)
-        .filter(app_db.models.Book.book_id == book.book_id)
+        .filter(app_db.models.Book.book_id == book_id)
         .first()
     )
     if not del_book:
@@ -64,15 +68,17 @@ def delete_book(
     return del_book
 
 
-def update_book(book: schemas.BookUpdate, current_session: Session):
+def update_book_by_id(
+    new_data: schemas.BookUpdate, book_id: int, current_session: Session
+):
     upd_book = (
         current_session.query(app_db.models.Book)
-        .filter(app_db.models.Book.book_id == book.book_id)
+        .filter(app_db.models.Book.book_id == book_id)
         .first()
     )
     if not upd_book:
         raise HTTPException(status_code=404, detail="Book not found")
-    for key, value in book.dict(exclude_unset=True).items():
+    for key, value in new_data.dict(exclude_unset=True).items():
         setattr(upd_book, key, value)
     current_session.commit()
     current_session.refresh(upd_book)

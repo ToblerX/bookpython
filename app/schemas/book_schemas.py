@@ -32,11 +32,7 @@ class BookCreate(BaseModel):
     # book_price: float
 
 
-class BookId(BaseModel):
-    book_id: int
-
-
-class BookUpdate(BookId):
+class BookUpdate(BaseModel):
     book_name: Optional[str] = None
     book_author: Optional[str] = None
     book_description: Optional[str] = None

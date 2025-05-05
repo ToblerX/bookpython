@@ -24,18 +24,31 @@ async def get_books(
     return services.get_books(pagination, sorting, current_session)
 
 
-@book_router.delete("/books", tags=["Books"], response_model=schemas.BookModel)
+@book_router.delete(
+    "/books/{book_id}", tags=["Books"], response_model=schemas.BookModel
+)
 async def delete_book(
-    book: schemas.BookId, current_session: Session = Depends(app_db.get_db)
+    book_id: int = Path(..., description="Id of the book to delete."),
+    current_session: Session = Depends(app_db.get_db),
 ):
-    return services.delete_book(book, current_session)
+    return services.delete_book_by_id(book_id, current_session)
 
 
-@book_router.put("/books", tags=["Books"], response_model=schemas.BookModel)
+@book_router.put("/books/{book_id}", tags=["Books"], response_model=schemas.BookModel)
 async def update_book(
-    book: schemas.BookUpdate, current_session: Session = Depends(app_db.get_db)
+    new_data: schemas.BookUpdate,
+    book_id: int = Path(..., description="Id of the book to update."),
+    current_session: Session = Depends(app_db.get_db),
 ):
-    return services.update_book(book, current_session)
+    return services.update_book_by_id(new_data, book_id, current_session)
+
+
+@book_router.get("/books/{book_id}", tags=["Books"], response_model=schemas.BookModel)
+async def get_book_by_id(
+    book_id: int = Path(..., description="ID of the book to get."),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.get_book_by_id(book_id, current_session)
 
 
 @book_router.post("/books/{book_id}/genres", tags=["Books"])
