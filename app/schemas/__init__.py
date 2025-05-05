@@ -1,3 +1,4 @@
-from .book import *
-from .user import *
-from .filters import *
+from .book_schemas import *
+from .user_schemas import *
+from .filter_schemas import *
+from .genre_schemas import *

@@ -36,7 +36,7 @@ def delete_book(
 ):
     del_book = (
         current_session.query(app_db.models.Book)
-        .filter(app_db.models.Book.id == book.id)
+        .filter(app_db.models.Book.book_id == book.book_id)
         .first()
     )
     if not del_book:
@@ -49,7 +49,7 @@ def delete_book(
 def update_book(book: schemas.BookUpdate, current_session: Session):
     upd_book = (
         current_session.query(app_db.models.Book)
-        .filter(app_db.models.Book.id == book.id)
+        .filter(app_db.models.Book.book_id == book.book_id)
         .first()
     )
     if not upd_book:

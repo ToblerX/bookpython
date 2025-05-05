@@ -11,9 +11,11 @@ app = FastAPI(
         {"name": "Users", "description": "Operations related to user accounts."},
         {"name": "Authentication", "description": "Login and token management."},
         {"name": "Books", "description": "Operations related to books."},
+        {"name": "Genres", "description": "Operations related to books' genres."},
     ],
 )
 
 
 app.include_router(api.book_router)
 app.include_router(api.user_router)
+app.include_router(api.genre_router)
