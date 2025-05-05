@@ -3,7 +3,7 @@ import datetime
 
 
 class UserModel(BaseModel):
-    id: int
+    user_id: int
     username: str
     hashed_password: str
     created_at: datetime.datetime
