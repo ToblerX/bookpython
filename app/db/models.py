@@ -31,7 +31,7 @@ class Book(database.Base):
     book_name = Column(String, nullable=False, unique=True)
     book_author = Column(String, nullable=False)
     book_description = Column(String, nullable=False)
-    # price = Column(Float, nullable=False)
+    book_price = Column(Float, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow

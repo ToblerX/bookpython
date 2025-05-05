@@ -8,7 +8,7 @@ class BookModel(BaseModel):
     book_name: str
     book_author: str
     book_description: str
-    # book_price: float
+    book_price: float
     created_at: datetime
     updated_at: datetime
 
@@ -29,11 +29,11 @@ class BookCreate(BaseModel):
     book_name: str
     book_author: str
     book_description: str
-    # book_price: float
+    book_price: float
 
 
 class BookUpdate(BaseModel):
     book_name: Optional[str] = None
     book_author: Optional[str] = None
     book_description: Optional[str] = None
-    # book_price: Optional[float] = None
+    book_price: Optional[float] = None
