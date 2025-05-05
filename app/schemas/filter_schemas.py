@@ -8,13 +8,13 @@ class Pagination(BaseModel):
     limit: int = 10
 
 
-sort_by_modes = ["name", "author"]
+sort_by_modes = ["book_name", "book_author"]
 
 
 class SortingBooks:
     def __init__(
         self,
-        sort_by: Literal[*sort_by_modes] = Query(default="name"),
+        sort_by: Literal[*sort_by_modes] = Query(default="book_name"),
         order: Literal["asc", "desc"] = Query(default="asc"),
     ):
         self.sort_by = sort_by or "created_at"
