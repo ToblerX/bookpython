@@ -4,12 +4,12 @@ from sqlalchemy.orm import relationship
 from . import database
 
 # Association table for many-to-many relationship between books and genres
-# book_genres = Table(
-#    "book_genres",
-#    database.Base.metadata,
-#    Column("book_id", Integer, ForeignKey("books.book_id"), primary_key=True),
-#    Column("genre_id", Integer, ForeignKey("genres.genre_id"), primary_key=True),
-# )
+book_genres = Table(
+    "book_genres",
+    database.Base.metadata,
+    Column("book_id", Integer, ForeignKey("books.book_id"), primary_key=True),
+    Column("genre_id", Integer, ForeignKey("genres.genre_id"), primary_key=True),
+)
 
 
 class User(database.Base):
@@ -37,8 +37,7 @@ class Book(database.Base):
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
 
-
-#    genres = relationship("Genre", secondary=book_genres)
+    genres = relationship("Genre", secondary=book_genres)
 
 
 class Genre(database.Base):
