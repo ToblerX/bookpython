@@ -8,7 +8,7 @@ class Pagination(BaseModel):
     limit: int = 10
 
 
-sort_by_modes = ["book_name", "book_author"]
+sort_by_modes = ["book_name", "book_author", "book_price"]
 
 
 class SortingBooks:

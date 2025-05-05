@@ -37,7 +37,7 @@ def get_books(
     sorting: Annotated[schemas.SortingBooks, Depends()],
     current_session: Session,
 ):
-    sort_column = func.lower(getattr(app_db.models.Book, sorting.sort_by))
+    sort_column = getattr(app_db.models.Book, sorting.sort_by)
     sort_order = asc(sort_column) if sorting.order == "asc" else desc(sort_column)
     return (
         current_session.query(app_db.models.Book)
