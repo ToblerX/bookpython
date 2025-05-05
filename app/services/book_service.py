@@ -14,6 +14,24 @@ def create_book(book: schemas.BookCreate, current_session: Session):
     return new_book
 
 
+def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
+    stmt = app_db.models.book_genres.insert().values(book_id=book_id, genre_id=genre_id)
+    current_session.execute(stmt)
+    current_session.commit()
+    return {"book_id": book_id, "genre_id": genre_id}
+
+
+def get_genres_for_book(book_id: int, current_session: Session):
+    return [
+        genre_id
+        for (genre_id,) in current_session.query(
+            app_db.models.book_genres.c.genre_id
+        )  # Accessing column using .c
+        .filter_by(book_id=book_id)
+        .all()
+    ]
+
+
 def get_books(
     pagination: schemas.Pagination,
     sorting: Annotated[schemas.SortingBooks, Depends()],
