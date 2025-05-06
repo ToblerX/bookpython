@@ -5,7 +5,7 @@ from .. import db as app_db
 
 def create_genre(genre: schemas.GenreCreate, current_session: Session):
     new_genre = app_db.models.Genre(**genre.dict())
-    new_genre.name = genre.name.title()
+    new_genre.genre_name = genre.genre_name.title()
     current_session.add(new_genre)
     current_session.commit()
     current_session.refresh(new_genre)

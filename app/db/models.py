@@ -44,4 +44,4 @@ class Genre(database.Base):
     __tablename__ = "genres"
 
     genre_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False, unique=True)
+    genre_name = Column(String, nullable=False, unique=True)

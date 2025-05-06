@@ -36,12 +36,12 @@ def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
     stmt = app_db.models.book_genres.insert().values(book_id=book_id, genre_id=genre_id)
     current_session.execute(stmt)
     current_session.commit()
-    return {"book": book.book_name, "genre": genre.name}
+    return {"book": book.book_name, "genre": genre.genre_name}
 
 
 def get_genres_for_book(book_id: int, current_session: Session):
     return [
-        genre.name
+        genre.genre_name
         for genre in current_session.query(app_db.models.Genre)
         .join(
             app_db.models.book_genres,
@@ -64,9 +64,9 @@ def get_books(
 
     # Join with genres and filter by genre names, if provided
     if sorting.genres:
-        genre_names = [genre.name for genre in sorting.genres]
+        genre_names = [genre.genre_name for genre in sorting.genres]
         query = query.join(app_db.models.Book.genres).filter(
-            app_db.models.Genre.name.in_(genre_names)
+            app_db.models.Genre.genre_name.in_(genre_names)
         )
 
     query = (
