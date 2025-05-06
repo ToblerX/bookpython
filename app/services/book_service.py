@@ -1,5 +1,5 @@
 from sqlalchemy import func, asc, desc
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from typing import Annotated
 from app import db as app_db
@@ -49,13 +49,24 @@ def get_books(
 ):
     sort_column = getattr(app_db.models.Book, sorting.sort_by)
     sort_order = asc(sort_column) if sorting.order == "asc" else desc(sort_column)
-    return (
-        current_session.query(app_db.models.Book)
+
+    query = current_session.query(app_db.models.Book)
+
+    # Join with genres and filter by genre names, if provided
+    if sorting.genres:
+        genre_names = [genre.name for genre in sorting.genres]
+        query = query.join(app_db.models.Book.genres).filter(
+            app_db.models.Genre.name.in_(genre_names)
+        )
+
+    query = (
+        query.options(joinedload(app_db.models.Book.genres))
         .order_by(sort_order)
         .offset(pagination.skip)
         .limit(pagination.limit)
-        .all()
     )
+
+    return query.all()
 
 
 def get_book_by_id(book_id: int, current_session: Session):
