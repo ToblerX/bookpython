@@ -15,6 +15,13 @@ def create_book(book: schemas.BookCreate, current_session: Session):
 
 
 def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
+    genre = current_session.query(app_db.models.Genre).get(genre_id)
+    if not genre:
+        raise HTTPException(status_code=404, detail="Genre not found")
+
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
     stmt = app_db.models.book_genres.insert().values(book_id=book_id, genre_id=genre_id)
     current_session.execute(stmt)
     current_session.commit()
