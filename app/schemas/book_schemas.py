@@ -1,6 +1,7 @@
 import datetime
 from pydantic import BaseModel
 from typing import Optional, List
+from .genre_schemas import GenreCreate
 
 
 class BookModel(BaseModel):
@@ -9,20 +10,13 @@ class BookModel(BaseModel):
     book_author: str
     book_description: str
     book_price: float
+    genres: Optional[List[GenreCreate]] = None
     created_at: datetime
     updated_at: datetime
 
     class Config:
         arbitrary_types_allowed = True
         from_attributes = True
-
-
-class BookGenresIds(BookModel):
-    genres_ids: Optional[List[int]] = None
-
-
-class BookGenresNames(BookModel):
-    genres_ids: Optional[List[str]] = None
 
 
 class BookCreate(BaseModel):
