@@ -8,6 +8,7 @@ from app import schemas
 
 def create_book(book: schemas.BookCreate, current_session: Session):
     new_book = app_db.models.Book(**book.dict())
+    new_book.book_name = new_book.book_name.title()
     current_session.add(new_book)
     current_session.commit()
     current_session.refresh(new_book)
