@@ -15,11 +15,6 @@ def get_genres(current_session: Session):
     return current_session.query(app_db.models.Genre).all()
 
 
-# def get_genre_name_by_id()
-
-# def get_genre_id_by_name()
-
-
 def delete_genre_by_id(genre_id: int, current_session: Session):
     del_genre = (
         current_session.query(app_db.models.Genre)
