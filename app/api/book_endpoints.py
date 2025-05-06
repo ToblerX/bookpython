@@ -60,7 +60,7 @@ async def add_genre_for_book(
     return services.add_genre_for_book(book_id, genre_id, current_session)
 
 
-@book_router.get("/books/{book_id}/genres", tags=["Books"], response_model=List[int])
+@book_router.get("/books/{book_id}/genres", tags=["Books"], response_model=List[str])
 async def get_genre_for_book(
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),

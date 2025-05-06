@@ -23,11 +23,13 @@ def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
 
 def get_genres_for_book(book_id: int, current_session: Session):
     return [
-        genre_id
-        for (genre_id,) in current_session.query(
-            app_db.models.book_genres.c.genre_id
-        )  # Accessing column using .c
-        .filter_by(book_id=book_id)
+        genre.name
+        for genre in current_session.query(app_db.models.Genre)
+        .join(
+            app_db.models.book_genres,
+            app_db.models.Genre.genre_id == app_db.models.book_genres.c.genre_id,
+        )
+        .filter(app_db.models.book_genres.c.book_id == book_id)
         .all()
     ]
 
