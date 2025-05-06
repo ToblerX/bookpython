@@ -1,4 +1,4 @@
-from sqlalchemy import func, asc, desc
+from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from typing import Annotated
@@ -23,10 +23,20 @@ def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
+    # Check if the book already has the genre
+    stmt_check = select(app_db.models.book_genres).where(
+        app_db.models.book_genres.c.book_id == book_id,
+        app_db.models.book_genres.c.genre_id == genre_id,
+    )
+    result = current_session.execute(stmt_check).first()
+    if result:
+        raise HTTPException(
+            status_code=400, detail="Genre already associated with this book"
+        )
     stmt = app_db.models.book_genres.insert().values(book_id=book_id, genre_id=genre_id)
     current_session.execute(stmt)
     current_session.commit()
-    return {"book_id": book_id, "genre_id": genre_id}
+    return {"book": book.book_name, "genre": genre.name}
 
 
 def get_genres_for_book(book_id: int, current_session: Session):
