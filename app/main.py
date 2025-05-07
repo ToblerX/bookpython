@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from . import api
 import app.db as database
+from .init_db import init_db
 
 database.Base.metadata.create_all(bind=database.engine)
+init_db()
 app = FastAPI(
     title="Book Python API",
     description="API to handle operations in a book shop.",
