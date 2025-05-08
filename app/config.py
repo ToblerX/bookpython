@@ -26,3 +26,4 @@ GENRES = [
     "Science",
     "Travel",
 ]
+IMAGES_BOOKS_PATH = "app/static/images/books/"

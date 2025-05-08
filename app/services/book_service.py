@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from typing import Annotated
 from app import db as app_db
-from app import schemas
+from app import schemas, config
+import os
 
 
 def create_book(book: schemas.BookCreate, current_session: Session):
     new_book = app_db.models.Book(**book.dict())
     new_book.book_name = new_book.book_name.title()
+    os.mkdir(config.IMAGES_BOOKS_PATH + new_book.book_name)
     current_session.add(new_book)
     current_session.commit()
     current_session.refresh(new_book)
