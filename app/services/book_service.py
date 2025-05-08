@@ -11,6 +11,15 @@ import shutil
 def create_book(book: schemas.BookCreate, current_session: Session):
     new_book = app_db.models.Book(**book.dict())
     new_book.book_name = new_book.book_name.title()
+
+    check = (
+        current_session.query(app_db.models.Book)
+        .filter(app_db.models.Book.book_name == new_book.book_name)
+        .first()
+    )
+    if check:
+        raise HTTPException(status_code=400, detail="Book already exists")
+
     os.mkdir(config.IMAGES_BOOKS_PATH + new_book.book_name)
     current_session.add(new_book)
     current_session.commit()
