@@ -5,6 +5,7 @@ from typing import Annotated
 from app import db as app_db
 from app import schemas, config
 import os
+import shutil
 
 
 def create_book(book: schemas.BookCreate, current_session: Session):
@@ -96,6 +97,7 @@ def delete_book_by_id(
     )
     if not del_book:
         raise HTTPException(status_code=404, detail="Book not found")
+    shutil.rmtree(config.IMAGES_BOOKS_PATH + del_book.book_name)
     current_session.delete(del_book)
     current_session.commit()
     return del_book
