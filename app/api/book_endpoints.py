@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.params import Depends, Query, Path
 from sqlalchemy.orm import Session
 from app import db as app_db
@@ -66,3 +66,15 @@ async def get_genre_for_book(
     current_session: Session = Depends(app_db.get_db),
 ):
     return services.get_genres_for_book(book_id, current_session)
+
+
+@book_router.post("/books/{book_id}/images", tags=["Books"])
+async def add_image_for_book(
+    file: UploadFile = File(...),
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image.")
+    contents = await file.read()
+    return services.add_image_for_book(contents, book_id, current_session)

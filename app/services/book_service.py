@@ -1,9 +1,11 @@
 from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session, joinedload
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, UploadFile
 from typing import Annotated
 from app import db as app_db
 from app import schemas, config
+from PIL import Image
+import io
 import os
 import shutil
 
@@ -127,3 +129,23 @@ def update_book_by_id(
     current_session.commit()
     current_session.refresh(upd_book)
     return upd_book
+
+
+def add_image_for_book(contents: bytes, book_id: int, session: Session):
+    image = Image.open(io.BytesIO(contents))
+    book = session.query(app_db.models.Book).get(book_id)
+
+    extension = image.format.lower() if image.format else "jpg"
+    filename = f"{book.book_name}.{extension}"
+
+    # Get absolute path relative to this script's location
+    base_dir = os.path.dirname(__file__)  # this points to book_service.py's directory
+    image_dir = os.path.join(
+        base_dir, "..", "static", "images", "books", book.book_name
+    )
+    os.makedirs(image_dir, exist_ok=True)
+
+    image_path = os.path.join(image_dir, filename)
+    image.save(image_path)
+
+    return {"status": 200, "filename": filename}
