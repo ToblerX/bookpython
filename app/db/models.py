@@ -32,6 +32,7 @@ class Book(database.Base):
     book_author = Column(String, nullable=False)
     book_description = Column(String, nullable=False)
     book_price = Column(Float, nullable=False)
+    book_cover_path = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
