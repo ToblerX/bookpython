@@ -143,11 +143,8 @@ def add_image_for_book(contents: bytes, book_id: int, session: Session):
 
     extension = image.format.lower() if image.format else "jpg"
 
-    # Set image directory path
-    base_dir = os.path.dirname(__file__)
-    image_dir = os.path.join(
-        base_dir, "..", "static", "images", "books", book.book_name
-    )
+    image_dir = config.IMAGES_BOOKS_PATH + book.book_name
+
     os.makedirs(image_dir, exist_ok=True)
 
     # Count existing image files in the folder
