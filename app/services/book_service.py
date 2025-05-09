@@ -186,22 +186,29 @@ def delete_image_by_id(
     image_id: int,
     session: Session,
 ):
-    # Query the book based on the book_id
     book = session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
 
-    # Build the image directory path
     image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
 
-    # Iterate through all files in the directory
+    target_image_path = None
     for filename in os.listdir(image_dir):
-        # Check if the image_id is in the filename and it has any extension
-        if str(image_id) in filename:
-            image_path = os.path.join(image_dir, filename)
-            # Remove the file
-            os.remove(image_path)
-            return {"status": 200, "filename": filename}
+        if filename.startswith(f"{image_id}."):
+            target_image_path = os.path.join(image_dir, filename)
+            os.remove(target_image_path)
+            break
 
-    # If no image with that ID was found
-    raise HTTPException(status_code=404, detail="Image not found")
+    if not target_image_path:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    for filename in os.listdir(image_dir):
+        current_id = int(filename.split(".")[0])
+
+        if current_id > image_id:
+            new_filename = f"{current_id - 1}.{filename.split('.')[1]}"
+            old_image_path = os.path.join(image_dir, filename)
+            new_image_path = os.path.join(image_dir, new_filename)
+            os.rename(old_image_path, new_image_path)
+
+    return {"status": 200, "filename": str(image_id)}
