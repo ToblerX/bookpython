@@ -10,6 +10,7 @@ class BookModel(BaseModel):
     book_author: str
     book_description: str
     book_price: float
+    book_cover_path: str
     genres: Optional[List[GenreCreate]] = None
     created_at: datetime
     updated_at: datetime

@@ -13,6 +13,9 @@ import shutil
 def create_book(book: schemas.BookCreate, current_session: Session):
     new_book = app_db.models.Book(**book.dict())
     new_book.book_name = new_book.book_name.title()
+    new_book.book_cover_path = os.path.join(
+        config.IMAGES_BOOKS_PATH, "cover_not_available.jpg"
+    )
 
     check = (
         current_session.query(app_db.models.Book)
