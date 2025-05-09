@@ -160,3 +160,23 @@ def add_image_for_book(contents: bytes, book_id: int, session: Session):
     image.save(image_path)
 
     return {"status": 200, "filename": filename}
+
+
+def get_images_for_book(book_id: int, session: Session):
+    # Get the book object
+    book = session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    image_dir = config.IMAGES_BOOKS_PATH + book.book_name
+
+    if not os.path.exists(image_dir):
+        return []
+
+    image_files = [
+        filename
+        for filename in os.listdir(image_dir)
+        if os.path.isfile(os.path.join(image_dir, filename))
+    ]
+
+    return image_files

@@ -78,3 +78,11 @@ async def add_image_for_book(
         raise HTTPException(status_code=400, detail="File must be an image.")
     contents = await file.read()
     return services.add_image_for_book(contents, book_id, current_session)
+
+
+@book_router.get("/books/{book_id}/images", tags=["Books"])
+async def get_images_for_book(
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.get_images_for_book(book_id, current_session)
