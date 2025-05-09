@@ -1,6 +1,6 @@
 from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session, joinedload
-from fastapi import Depends, HTTPException, UploadFile
+from fastapi import Depends, HTTPException
 from typing import Annotated
 from app import db as app_db
 from app import schemas, config
@@ -140,9 +140,9 @@ def update_book_by_id(
     return upd_book
 
 
-def add_image_for_book(contents: bytes, book_id: int, session: Session):
+def add_image_for_book(contents: bytes, book_id: int, current_session: Session):
     image = Image.open(io.BytesIO(contents))
-    book = session.query(app_db.models.Book).get(book_id)
+    book = current_session.query(app_db.models.Book).get(book_id)
 
     extension = image.format.lower() if image.format else "jpg"
 
@@ -150,23 +150,20 @@ def add_image_for_book(contents: bytes, book_id: int, session: Session):
 
     os.makedirs(image_dir, exist_ok=True)
 
-    # Count existing image files in the folder
     existing_files = [
         f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))
     ]
     new_index = len(existing_files)
     filename = f"{new_index}.{extension}"
 
-    # Save image
     image_path = os.path.join(image_dir, filename)
-    image = image.convert("RGB")
     image.save(image_path)
 
     return {"status": 200, "filename": filename}
 
 
-def get_images_for_book(book_id: int, session: Session):
-    book = session.query(app_db.models.Book).get(book_id)
+def get_images_for_book(book_id: int, current_session: Session):
+    book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
 
@@ -187,9 +184,9 @@ def get_images_for_book(book_id: int, session: Session):
 def delete_image_by_id(
     book_id: int,
     image_id: int,
-    session: Session,
+    current_session: Session,
 ):
-    book = session.query(app_db.models.Book).get(book_id)
+    book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
 
@@ -206,6 +203,9 @@ def delete_image_by_id(
         raise HTTPException(status_code=404, detail="Image not found")
 
     for filename in os.listdir(image_dir):
+        if filename.startswith("cover"):
+            continue
+
         current_id = int(filename.split(".")[0])
 
         if current_id > image_id:
@@ -215,3 +215,54 @@ def delete_image_by_id(
             os.rename(old_image_path, new_image_path)
 
     return {"status": 200, "filename": str(image_id)}
+
+
+def get_cover_path_for_book(book_id: int, current_session: Session):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    return book.book_cover_path
+
+
+def update_cover_for_book(contents: bytes, book_id: int, current_session: Session):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    image = Image.open(io.BytesIO(contents))
+    extension = image.format.lower() if image.format else "jpg"
+    image_dir = config.IMAGES_BOOKS_PATH + book.book_name
+    filename = f"cover.{extension}"
+    # need to overwrite the existing if it is there
+    image_path = image_dir + "/" + filename
+    image.save(image_path)
+
+    if book.book_cover_path == config.DEFAULT_COVER_PATH:
+        book.book_cover_path = image_path
+
+    current_session.commit()
+    current_session.refresh(book)
+
+    return {"status": 200, "filename": filename}
+
+
+def delete_cover_for_book(
+    book_id: int,
+    current_session: Session,
+):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if book.book_cover_path == config.DEFAULT_COVER_PATH:
+        raise HTTPException(status_code=400, detail="Can't delete default cover")
+
+    image_dir = config.IMAGES_BOOKS_PATH + book.book_name
+
+    for filename in os.listdir(image_dir):
+        if filename.startswith("cover"):
+            os.remove(os.path.join(image_dir, filename))
+            break
+
+    book.book_cover_path = config.DEFAULT_COVER_PATH
+
+    current_session.commit()
+    current_session.refresh(book)
+
+    return {"status": 200, "book_name": book.book_name}

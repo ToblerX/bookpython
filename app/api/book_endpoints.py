@@ -95,3 +95,31 @@ async def delete_image_for_book(
     current_session: Session = Depends(app_db.get_db),
 ):
     return services.delete_image_by_id(book_id, image_id, current_session)
+
+
+@book_router.get("/books/{book_id}/cover", tags=["Books"])
+async def get_cover_for_book(
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.get_cover_path_for_book(book_id, current_session)
+
+
+@book_router.put("/books/{book_id}/cover", tags=["Books"])
+async def update_cover_for_book(
+    file: UploadFile = File(...),
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image.")
+    contents = await file.read()
+    return services.update_cover_for_book(contents, book_id, current_session)
+
+
+@book_router.delete("/books/{book_id}/cover", tags=["Books"])
+async def delete_cover_for_book(
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.delete_cover_for_book(book_id, current_session)

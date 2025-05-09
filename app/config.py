@@ -27,3 +27,4 @@ GENRES = [
     "Travel",
 ]
 IMAGES_BOOKS_PATH = "app/static/images/books/"
+DEFAULT_COVER_PATH = IMAGES_BOOKS_PATH + "cover_not_available.jpg"
