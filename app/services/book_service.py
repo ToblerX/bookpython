@@ -136,16 +136,24 @@ def add_image_for_book(contents: bytes, book_id: int, session: Session):
     book = session.query(app_db.models.Book).get(book_id)
 
     extension = image.format.lower() if image.format else "jpg"
-    filename = f"{book.book_name}.{extension}"
 
-    # Get absolute path relative to this script's location
-    base_dir = os.path.dirname(__file__)  # this points to book_service.py's directory
+    # Set image directory path
+    base_dir = os.path.dirname(__file__)
     image_dir = os.path.join(
         base_dir, "..", "static", "images", "books", book.book_name
     )
     os.makedirs(image_dir, exist_ok=True)
 
+    # Count existing image files in the folder
+    existing_files = [
+        f for f in os.listdir(image_dir) if os.path.isfile(os.path.join(image_dir, f))
+    ]
+    new_index = len(existing_files)
+    filename = f"{new_index}.{extension}"
+
+    # Save image
     image_path = os.path.join(image_dir, filename)
+    image = image.convert("RGB")
     image.save(image_path)
 
     return {"status": 200, "filename": filename}
