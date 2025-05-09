@@ -163,7 +163,6 @@ def add_image_for_book(contents: bytes, book_id: int, session: Session):
 
 
 def get_images_for_book(book_id: int, session: Session):
-    # Get the book object
     book = session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
@@ -180,3 +179,29 @@ def get_images_for_book(book_id: int, session: Session):
     ]
 
     return image_files
+
+
+def delete_image_by_id(
+    book_id: int,
+    image_id: int,
+    session: Session,
+):
+    # Query the book based on the book_id
+    book = session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+
+    # Build the image directory path
+    image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
+
+    # Iterate through all files in the directory
+    for filename in os.listdir(image_dir):
+        # Check if the image_id is in the filename and it has any extension
+        if str(image_id) in filename:
+            image_path = os.path.join(image_dir, filename)
+            # Remove the file
+            os.remove(image_path)
+            return {"status": 200, "filename": filename}
+
+    # If no image with that ID was found
+    raise HTTPException(status_code=404, detail="Image not found")
