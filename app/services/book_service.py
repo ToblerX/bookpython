@@ -124,8 +124,14 @@ def update_book_by_id(
     )
     if not upd_book:
         raise HTTPException(status_code=404, detail="Book not found")
+    if upd_book.book_name != new_data.book_name:
+        os.rename(
+            config.IMAGES_BOOKS_PATH + upd_book.book_name,
+            config.IMAGES_BOOKS_PATH + new_data.book_name.title(),
+        )
     for key, value in new_data.dict(exclude_unset=True).items():
         setattr(upd_book, key, value)
+    upd_book.book_name = upd_book.book_name.title()
     current_session.commit()
     current_session.refresh(upd_book)
     return upd_book
