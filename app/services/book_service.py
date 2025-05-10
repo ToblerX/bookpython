@@ -218,17 +218,22 @@ def delete_image_by_id(
     return {"status": 200, "path": target_image_path}
 
 
-def delete_all_images_for_book(book_id: int, current_session: Session):
+def delete_all_images_for_book(
+    book_id: int, current_session: Session, delete_cover: bool = False
+):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
     image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
-    image_list = get_images_for_book(book_id, current_session)
+    image_list = []
     for filename in os.listdir(image_dir):
         if re.match(r"^\d", filename):
             file_path = os.path.join(image_dir, filename)
             os.remove(file_path)
-    return {"status": 200, "deleted": image_list}
+            image_list.append(file_path)
+    if delete_cover:
+        delete_cover_for_book(book_id, current_session)
+    return {"status": 200, "deleted": image_list, "cover_deleted": delete_cover}
 
 
 def get_cover_path_for_book(book_id: int, current_session: Session):

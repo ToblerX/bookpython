@@ -101,8 +101,9 @@ async def delete_image_for_book(
 async def delete_images_for_book(
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
+    delete_cover: bool = False,
 ):
-    return services.delete_all_images_for_book(book_id, current_session)
+    return services.delete_all_images_for_book(book_id, current_session, delete_cover)
 
 
 @book_router.get("/books/{book_id}/cover", tags=["Books"])
