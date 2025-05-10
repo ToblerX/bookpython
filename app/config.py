@@ -29,6 +29,7 @@ GENRES = [
     "Science",
     "Travel",
 ]
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # IMAGE PATHS
 IMAGES_BOOKS_PATH = "app/static/images/books/"
