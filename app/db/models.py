@@ -1,5 +1,14 @@
 import datetime
-from sqlalchemy import Column, Integer, String, DateTime, Table, ForeignKey, Float
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    DateTime,
+    Table,
+    ForeignKey,
+    Float,
+    Boolean,
+)
 from sqlalchemy.orm import relationship
 from . import database
 
@@ -18,6 +27,8 @@ class User(database.Base):
     user_id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
+    disabled = Column(Boolean, default=False)
+    role = Column(String, default="user")
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
