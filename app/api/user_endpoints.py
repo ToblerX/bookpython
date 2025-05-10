@@ -12,13 +12,28 @@ user_router = APIRouter()
 
 @user_router.post("/users", tags=["Users"], response_model=schemas.UserModel)
 async def create_user(
-    user: schemas.UserCreate, current_session: Session = Depends(app_db.get_db)
+    user: schemas.UserCreate,
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    current_session: Session = Depends(app_db.get_db),
 ):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only administrators can create new users.",
+        )
     return services.create_user(user, current_session)
 
 
-@user_router.get("/users", tags=["Users"], response_model=List[schemas.UserCreate])
-async def get_users(current_session: Session = Depends(app_db.get_db)):
+@user_router.get("/users", tags=["Users"], response_model=List[schemas.UserModel])
+async def get_users(
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only administrators can view user list.",
+        )
     return services.get_users(current_session)
 
 

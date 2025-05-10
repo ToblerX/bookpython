@@ -8,6 +8,7 @@ class UserModel(BaseModel):
     user_id: int
     username: str
     disabled: bool
+    role: str
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -23,6 +24,11 @@ class UserCreate(BaseModel):
 
 class UserDecode(BaseModel):
     username: str
+
+
+class UserOut(UserDecode):
+    id: int
+    role: str
 
 
 class Token(BaseModel):
