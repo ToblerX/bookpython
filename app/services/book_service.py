@@ -159,7 +159,7 @@ def add_image_for_book(contents: bytes, book_id: int, current_session: Session):
     image_path = os.path.join(image_dir, filename)
     image.save(image_path)
 
-    return {"status": 200, "filename": filename}
+    return {"status": 200, "path": image_path}
 
 
 def get_images_for_book(book_id: int, current_session: Session):
@@ -214,7 +214,7 @@ def delete_image_by_id(
             new_image_path = os.path.join(image_dir, new_filename)
             os.rename(old_image_path, new_image_path)
 
-    return {"status": 200, "filename": str(image_id)}
+    return {"status": 200, "path": target_image_path}
 
 
 def get_cover_path_for_book(book_id: int, current_session: Session):
@@ -232,7 +232,6 @@ def update_cover_for_book(contents: bytes, book_id: int, current_session: Sessio
     extension = image.format.lower() if image.format else "jpg"
     image_dir = config.IMAGES_BOOKS_PATH + book.book_name
     filename = f"cover.{extension}"
-    # need to overwrite the existing if it is there
     image_path = image_dir + "/" + filename
     image.save(image_path)
 
@@ -242,7 +241,7 @@ def update_cover_for_book(contents: bytes, book_id: int, current_session: Sessio
     current_session.commit()
     current_session.refresh(book)
 
-    return {"status": 200, "filename": filename}
+    return {"status": 200, "new_cover": image_path}
 
 
 def delete_cover_for_book(
@@ -260,9 +259,14 @@ def delete_cover_for_book(
             os.remove(os.path.join(image_dir, filename))
             break
 
+    old_cover = book.book_cover_path
     book.book_cover_path = config.DEFAULT_COVER_PATH
 
     current_session.commit()
     current_session.refresh(book)
 
-    return {"status": 200, "book_name": book.book_name}
+    return {
+        "status": 200,
+        "prev_cover": old_cover,
+        "new_cover": config.DEFAULT_COVER_PATH,
+    }
