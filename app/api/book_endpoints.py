@@ -68,6 +68,15 @@ async def get_genre_for_book(
     return services.get_genres_for_book(book_id, current_session)
 
 
+@book_router.delete("/books/{book_id}/genres", tags=["Books"])
+async def delete_genre_for_book(
+    book_id: int = Path(..., description="ID of the book"),
+    genre_id: int = Query(..., description="ID of the genre to delete"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.delete_genre_for_book(book_id, genre_id, current_session)
+
+
 @book_router.post("/books/{book_id}/images", tags=["Books"])
 async def add_image_for_book(
     file: UploadFile = File(...),

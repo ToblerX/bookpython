@@ -70,6 +70,22 @@ def get_genres_for_book(book_id: int, current_session: Session):
     ]
 
 
+def delete_genre_for_book(book_id: int, genre_id: int, current_session: Session):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    genre = current_session.query(app_db.models.Genre).get(genre_id)
+    if not genre:
+        raise HTTPException(status_code=404, detail="Genre not found")
+    if genre in book.genres:
+        book.genres.remove(genre)
+        current_session.commit()
+    else:
+        raise HTTPException(
+            status_code=404, detail="Genre not associated with this book"
+        )
+
+
 def get_books(
     pagination: schemas.Pagination,
     sorting: Annotated[schemas.SortingBooks, Depends()],
