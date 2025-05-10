@@ -8,6 +8,7 @@ from PIL import Image
 import io
 import os
 import shutil
+import re
 
 
 def create_book(book: schemas.BookCreate, current_session: Session):
@@ -215,6 +216,19 @@ def delete_image_by_id(
             os.rename(old_image_path, new_image_path)
 
     return {"status": 200, "path": target_image_path}
+
+
+def delete_all_images_for_book(book_id: int, current_session: Session):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Book not found")
+    image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
+    image_list = get_images_for_book(book_id, current_session)
+    for filename in os.listdir(image_dir):
+        if re.match(r"^\d", filename):
+            file_path = os.path.join(image_dir, filename)
+            os.remove(file_path)
+    return {"status": 200, "deleted": image_list}
 
 
 def get_cover_path_for_book(book_id: int, current_session: Session):
