@@ -1,12 +1,12 @@
 from sqlalchemy import select, func
-import app.db as database
+from . import db as app_db
 from . import config, services
 
 
 def init_db():
-    with database.LocalSession() as session:
+    with app_db.database.LocalSession() as session:
         count = session.execute(
-            select(func.count()).select_from(database.models.Genre)
+            select(func.count()).select_from(app_db.models.Genre)
         ).scalar()
         if count == 0:
             seed_genres()
@@ -16,33 +16,34 @@ def init_db():
 
 # TRUNCATE TABLE genres RESTART IDENTITY CASCADE;
 def seed_genres():
-    current_session = database.LocalSession()
+    current_session = app_db.database.LocalSession()
     genres = config.GENRES
     for name in genres:
         if (
-            not current_session.query(database.models.Genre)
+            not current_session.query(app_db.models.Genre)
             .filter_by(genre_name=name)
             .first()
         ):
-            current_session.add(database.models.Genre(genre_name=name))
+            current_session.add(app_db.models.Genre(genre_name=name))
     current_session.commit()
     current_session.close()
 
 
 def create_admin_user():
-    current_session = database.LocalSession()
+    current_session = app_db.LocalSession()
     try:
         if (
-            current_session.query(database.models.User)
-            .filter(database.models.User.role == "admin")
+            current_session.query(app_db.models.User)
+            .filter(app_db.models.User.role == "admin")
             .first()
         ):
             print("Admin user already exists.")
             return
-        admin = database.models.User(
+        admin = app_db.models.User(
             user_id=0,
             role="admin",
             username="admin",
+            email="admin@gmail.com",
             hashed_password=services.get_password_hash(config.ADMIN_PASSWORD),
             disabled=False,
         )

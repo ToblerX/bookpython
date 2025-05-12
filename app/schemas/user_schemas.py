@@ -1,12 +1,12 @@
 from typing import Optional
-
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import datetime
 
 
 class UserModel(BaseModel):
     user_id: int
     username: str
+    email: EmailStr
     disabled: bool
     role: str
     created_at: datetime.datetime
@@ -19,6 +19,7 @@ class UserInDb(UserModel):
 
 class UserCreate(BaseModel):
     username: str
+    email: EmailStr
     hashed_password: str
 
 
