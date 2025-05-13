@@ -1,5 +1,7 @@
 from dotenv import load_dotenv
 import os
+
+from itsdangerous import URLSafeTimedSerializer
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
 
@@ -53,3 +55,7 @@ MAIL_STARTTLS = True
 MAIL_SSL_TLS = False
 USE_CREDENTIALS = True
 VALIDATE_CERTS = True
+
+# EMAIL VERIFICATION
+serializer = URLSafeTimedSerializer(secret_key=SECRET_KEY, salt="email-configuration")
+DOMAIN = os.getenv("DOMAIN")

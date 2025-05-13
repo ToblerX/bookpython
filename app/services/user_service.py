@@ -1,6 +1,8 @@
+import logging
 from datetime import timedelta, datetime
 from fastapi import HTTPException, Depends
 from jwt.exceptions import InvalidTokenError
+from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from starlette import status
 from typing import Annotated
@@ -26,10 +28,37 @@ def create_user(user: schemas.UserCreate, current_session: Session):
     return new_user
 
 
+def user_exists(user: schemas.UserCreate, current_session: Session):
+    check_user = (
+        current_session.query(app_db.User)
+        .filter(app_db.User.username == user.username)
+        .first()
+    )
+    return True if check_user else False
+
+
 def get_users(current_session: Session):
     return current_session.query(app_db.User).all()
 
 
+def get_user_by_email(email: EmailStr, current_session: Session):
+    check_user = (
+        current_session.query(app_db.User).filter(app_db.User.email == email).first()
+    )
+    if not check_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return check_user
+
+
+def update_user(user: app_db.User, user_data: dict, current_session: Session):
+    for k, v in user_data.items():
+        setattr(user, k, v)
+    current_session.commit()
+    current_session.refresh(user)
+    return user
+
+
+# == AUTH ==
 def get_user(username: str, current_session: Session):
     user_dict = (
         current_session.query(app_db.User)
@@ -90,3 +119,19 @@ def get_current_active_user(
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
+
+
+def create_url_safe_token(data: dict):
+    token = config.serializer.dumps(data)
+    return token
+
+
+def decode_url_safe_token(token: str):
+    try:
+        token_data = config.serializer.loads(token)
+        return token_data
+    except Exception as e:
+        logging.error(str(e))
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token"
+        )

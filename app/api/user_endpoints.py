@@ -1,27 +1,74 @@
 from datetime import timedelta
 from typing import List, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.params import Query
+from fastapi.security import OAuth2PasswordRequestForm, oauth2
 from sqlalchemy.orm import Session
-from .. import schemas, services, config
-from .. import db as app_db
+from starlette.responses import JSONResponse
 
+from .. import schemas, services, config, mail
+from .. import db as app_db
 
 user_router = APIRouter()
 
 
-@user_router.post("/users", tags=["Users"], response_model=schemas.UserModel)
+@user_router.post("/users", tags=["Users"])
 async def create_user(
     user: schemas.UserCreate,
-    current_user: schemas.UserOut = Depends(services.get_current_active_user),
     current_session: Session = Depends(app_db.get_db),
 ):
-    if current_user.role != "admin":
+    email = user.email
+    user_exists = services.user_exists(user, current_session)
+    if user_exists:
         raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only administrators can create new users.",
+            status_code=status.HTTP_403_FORBIDDEN, detail="User already exists"
         )
-    return services.create_user(user, current_session)
+    new_user = services.create_user(user, current_session)
+
+    token = services.create_url_safe_token(data={"email": email})
+
+    link = f"http://{config.DOMAIN}/verify/{token}"
+
+    html_message = f"""
+    <h1>Verify your email</h1>
+    <p>Please click this <a href="{link}">link</a> to verify your email</p>
+    """
+
+    message = mail.create_message(
+        recipients=[email],
+        subject="Welcome",
+        body=html_message,
+    )
+
+    await mail.mail_engine.send_message(message)
+
+    return {
+        "message": "Account created, check your email to verify your account",
+        "user": new_user,
+    }
+
+
+@user_router.get("/verify/{token}", tags=["Users"])
+async def verify_user_account(
+    token: str,
+    current_session: Session = Depends(app_db.get_db),
+):
+    token_data = services.decode_url_safe_token(token)
+    user_email = token_data.get("email")
+    if user_email:
+        user = services.get_user_by_email(user_email, current_session)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+            )
+        services.update_user(user, {"verified": True}, current_session)
+        return JSONResponse(
+            {"message": "Account verified successfully"}, status_code=status.HTTP_200_OK
+        )
+    return JSONResponse(
+        content={"message": "Error occurred during verification"},
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
 
 
 @user_router.get("/users", tags=["Users"], response_model=List[schemas.UserModel])
