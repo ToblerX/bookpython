@@ -44,6 +44,7 @@ def create_admin_user():
             role="admin",
             username="admin",
             email="admin@gmail.com",
+            verified=True,
             hashed_password=services.get_password_hash(config.ADMIN_PASSWORD),
             disabled=False,
         )

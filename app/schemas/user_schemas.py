@@ -8,6 +8,7 @@ class UserModel(BaseModel):
     username: str
     email: EmailStr
     disabled: bool
+    verified: bool
     role: str
     created_at: datetime.datetime
     updated_at: datetime.datetime

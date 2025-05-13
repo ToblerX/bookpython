@@ -29,6 +29,7 @@ class User(database.Base):
     email = Column(String, nullable=False, unique=True)
     hashed_password = Column(String, nullable=False)
     disabled = Column(Boolean, default=False)
+    verified = Column(Boolean, default=False)
     role = Column(String, default="user")
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(
