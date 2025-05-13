@@ -14,6 +14,7 @@ app = FastAPI(
         {"name": "Authentication", "description": "Login and token management."},
         {"name": "Books", "description": "Operations related to books."},
         {"name": "Genres", "description": "Operations related to books' genres."},
+        {"name": "Mail", "description": "Operations related to mails."},
     ],
 )
 
@@ -21,3 +22,4 @@ app = FastAPI(
 app.include_router(api.book_router)
 app.include_router(api.user_router)
 app.include_router(api.genre_router)
+app.include_router(api.mail_router)
