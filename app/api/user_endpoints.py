@@ -12,35 +12,20 @@ from .. import db as app_db
 user_router = APIRouter()
 
 
-@user_router.post("/users", tags=["Users"])
+@user_router.post("/signup", tags=["Users"])
 async def create_user(
     user: schemas.UserCreate,
     current_session: Session = Depends(app_db.get_db),
 ):
-    email = user.email
     user_exists = services.user_exists(user, current_session)
     if user_exists:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="User already exists"
         )
+
     new_user = services.create_user(user, current_session)
 
-    token = services.create_url_safe_token(data={"email": email})
-
-    link = f"http://{config.DOMAIN}/verify/{token}"
-
-    html_message = f"""
-    <h1>Verify your email</h1>
-    <p>Please click this <a href="{link}">link</a> to verify your email</p>
-    """
-
-    message = mail.create_message(
-        recipients=[email],
-        subject="Welcome",
-        body=html_message,
-    )
-
-    await mail.mail_engine.send_message(message)
+    await services.send_verification_email(user.email)
 
     return {
         "message": "Account created, check your email to verify your account",
@@ -104,7 +89,14 @@ async def login_for_access_token(
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect username or password.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    if not user.verified:
+        await services.send_verification_email(user.email)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your email has not been verified, the verification link has been sent to your email.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)

@@ -1,5 +1,4 @@
 from typing import List
-
 from fastapi_mail import FastMail, ConnectionConfig, MessageSchema, MessageType
 from pathlib import Path
 from pydantic import EmailStr
