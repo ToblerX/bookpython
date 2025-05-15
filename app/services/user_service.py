@@ -6,7 +6,7 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from starlette import status
 from typing import Annotated
-from .. import schemas, config, mail
+from .. import schemas, config, mail, errors
 from .. import db as app_db
 import jwt
 
@@ -46,7 +46,7 @@ def get_user_by_email(email: EmailStr, current_session: Session):
         current_session.query(app_db.User).filter(app_db.User.email == email).first()
     )
     if not check_user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise errors.UserNotFound()
     return check_user
 
 
@@ -67,7 +67,7 @@ def get_user(username: str, current_session: Session):
     )
     if user_dict:
         return user_dict
-    raise HTTPException(status_code=404, detail="User not found")
+    raise errors.UserNotFound()
 
 
 def authenticate_user(username: str, password: str, current_session: Session):
@@ -94,22 +94,17 @@ def get_current_user(
     token: Annotated[str, Depends(config.oauth2_scheme)],
     current_session: Session = Depends(app_db.database.get_db),
 ):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise errors.WrongCredentials()
         token_data = schemas.TokenData(username=username)
     except InvalidTokenError:
-        raise credentials_exception
+        raise errors.WrongCredentials()
     user = get_user(token_data.username, current_session)
     if user is None:
-        raise credentials_exception
+        raise errors.WrongCredentials()
     return user
 
 
@@ -117,7 +112,7 @@ def get_current_active_user(
     current_user: Annotated[schemas.UserModel, Depends(get_current_user)],
 ):
     if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
+        raise errors.UserNotActive()
     return current_user
 
 
@@ -132,9 +127,7 @@ def decode_url_safe_token(token: str):
         return token_data
     except Exception as e:
         logging.error(str(e))
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired token"
-        )
+        raise errors.InvalidToken()
 
 
 async def send_verification_email(user_email: EmailStr):

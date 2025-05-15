@@ -1,12 +1,11 @@
 from datetime import timedelta
 from typing import List, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.params import Query
-from fastapi.security import OAuth2PasswordRequestForm, oauth2
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from .. import schemas, services, config, mail
+from .. import schemas, services, config, errors
 from .. import db as app_db
 
 user_router = APIRouter()
@@ -19,9 +18,7 @@ async def create_user(
 ):
     user_exists = services.user_exists(user, current_session)
     if user_exists:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="User already exists"
-        )
+        raise errors.UserAlreadyExists()
 
     new_user = services.create_user(user, current_session)
 
@@ -43,9 +40,7 @@ async def verify_user_account(
     if user_email:
         user = services.get_user_by_email(user_email, current_session)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-            )
+            raise errors.UserNotFound()
         services.update_user(user, {"verified": True}, current_session)
         return JSONResponse(
             {"message": "Account verified successfully"}, status_code=status.HTTP_200_OK
@@ -62,10 +57,7 @@ async def get_users(
     current_session: Session = Depends(app_db.get_db),
 ):
     if current_user.role != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only administrators can view user list.",
-        )
+        raise errors.OnlyAdminsAllowed()
     return services.get_users(current_session)
 
 
@@ -87,18 +79,10 @@ async def login_for_access_token(
         form_data.username, form_data.password, current_session
     )
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise errors.WrongCredentials()
     if not user.verified:
         await services.send_verification_email(user.email)
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your email has not been verified, the verification link has been sent to your email.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+        raise errors.UserNotVerified()
     access_token_expires = timedelta(minutes=config.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = services.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires

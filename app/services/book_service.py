@@ -3,12 +3,14 @@ from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends, HTTPException
 from typing import Annotated
 from app import db as app_db
-from app import schemas, config
+from app import schemas, config, errors
 from PIL import Image
 import io
 import os
 import shutil
 import re
+
+from app.errors import BookAlreadyExists
 
 
 def create_book(book: schemas.BookCreate, current_session: Session):
@@ -24,7 +26,7 @@ def create_book(book: schemas.BookCreate, current_session: Session):
         .first()
     )
     if check:
-        raise HTTPException(status_code=400, detail="Book already exists")
+        raise BookAlreadyExists()
 
     os.mkdir(config.IMAGES_BOOKS_PATH + new_book.book_name)
     current_session.add(new_book)
@@ -36,11 +38,11 @@ def create_book(book: schemas.BookCreate, current_session: Session):
 def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
     genre = current_session.query(app_db.models.Genre).get(genre_id)
     if not genre:
-        raise HTTPException(status_code=404, detail="Genre not found")
+        raise errors.GenreNotFound()
 
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     # Check if the book already has the genre
     stmt_check = select(app_db.models.book_genres).where(
         app_db.models.book_genres.c.book_id == book_id,
@@ -48,9 +50,7 @@ def add_genre_for_book(book_id: int, genre_id: int, current_session: Session):
     )
     result = current_session.execute(stmt_check).first()
     if result:
-        raise HTTPException(
-            status_code=400, detail="Genre already associated with this book"
-        )
+        raise errors.GenreAlreadyAssociated()
     stmt = app_db.models.book_genres.insert().values(book_id=book_id, genre_id=genre_id)
     current_session.execute(stmt)
     current_session.commit()
@@ -73,17 +73,15 @@ def get_genres_for_book(book_id: int, current_session: Session):
 def delete_genre_for_book(book_id: int, genre_id: int, current_session: Session):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     genre = current_session.query(app_db.models.Genre).get(genre_id)
     if not genre:
-        raise HTTPException(status_code=404, detail="Genre not found")
+        raise errors.GenreNotFound()
     if genre in book.genres:
         book.genres.remove(genre)
         current_session.commit()
     else:
-        raise HTTPException(
-            status_code=404, detail="Genre not associated with this book"
-        )
+        raise errors.GenreNotAssociated()
 
 
 def get_books(
@@ -127,7 +125,7 @@ def delete_book_by_id(
         .first()
     )
     if not del_book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     shutil.rmtree(config.IMAGES_BOOKS_PATH + del_book.book_name)
     current_session.delete(del_book)
     current_session.commit()
@@ -143,7 +141,7 @@ def update_book_by_id(
         .first()
     )
     if not upd_book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     if upd_book.book_name != new_data.book_name:
         os.rename(
             config.IMAGES_BOOKS_PATH + upd_book.book_name,
@@ -182,7 +180,7 @@ def add_image_for_book(contents: bytes, book_id: int, current_session: Session):
 def get_images_for_book(book_id: int, current_session: Session):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
 
     image_dir = config.IMAGES_BOOKS_PATH + book.book_name
 
@@ -205,7 +203,7 @@ def delete_image_by_id(
 ):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
 
     image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
 
@@ -217,7 +215,7 @@ def delete_image_by_id(
             break
 
     if not target_image_path:
-        raise HTTPException(status_code=404, detail="Image not found")
+        raise errors.ImageNotFound()
 
     for filename in os.listdir(image_dir):
         if filename.startswith("cover"):
@@ -239,7 +237,7 @@ def delete_all_images_for_book(
 ):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     image_dir = os.path.join(config.IMAGES_BOOKS_PATH, book.book_name)
     image_list = []
     for filename in os.listdir(image_dir):
@@ -255,14 +253,14 @@ def delete_all_images_for_book(
 def get_cover_path_for_book(book_id: int, current_session: Session):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     return book.book_cover_path
 
 
 def update_cover_for_book(contents: bytes, book_id: int, current_session: Session):
     book = current_session.query(app_db.models.Book).get(book_id)
     if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
+        raise errors.BookNotFound()
     image = Image.open(io.BytesIO(contents))
     extension = image.format.lower() if image.format else "jpg"
     image_dir = config.IMAGES_BOOKS_PATH + book.book_name
@@ -285,7 +283,7 @@ def delete_cover_for_book(
 ):
     book = current_session.query(app_db.models.Book).get(book_id)
     if book.book_cover_path == config.DEFAULT_COVER_PATH:
-        raise HTTPException(status_code=400, detail="Can't delete default cover")
+        raise errors.CantDeleteDefaultCover()
 
     image_dir = config.IMAGES_BOOKS_PATH + book.book_name
 

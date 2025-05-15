@@ -3,7 +3,7 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.params import Depends, Query, Path
 from sqlalchemy.orm import Session
 from app import db as app_db
-from app import services, schemas
+from app import services, schemas, errors
 
 book_router = APIRouter()
 
@@ -84,7 +84,7 @@ async def add_image_for_book(
     current_session: Session = Depends(app_db.get_db),
 ):
     if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="File must be an image.")
+        raise errors.FileMustBeImage()
     contents = await file.read()
     return services.add_image_for_book(contents, book_id, current_session)
 
@@ -130,7 +130,7 @@ async def update_cover_for_book(
     current_session: Session = Depends(app_db.get_db),
 ):
     if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="File must be an image.")
+        raise errors.FileMustBeImage()
     contents = await file.read()
     return services.update_cover_for_book(contents, book_id, current_session)
 
