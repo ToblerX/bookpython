@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status
+from fastapi.responses import JSONResponse
 from . import api, errors
 import app.db as database
 from .init_db import init_db
@@ -172,6 +173,29 @@ app.add_exception_handler(
         },
     ),
 )
+
+
+@app.exception_handler(500)
+async def internal_server_error(request, exception):
+    return JSONResponse(
+        content={
+            "message": "Oops! Something went wrong!",
+            "error_code": "server_error",
+        },
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )
+
+
+@app.exception_handler(401)
+async def unauthorized(request, exception):
+    return JSONResponse(
+        content={
+            "message": "You need to be authorized to access this page.",
+            "error_code": "not_authorized",
+        },
+        status_code=status.HTTP_401_UNAUTHORIZED,
+    )
+
 
 ## === ROUTERS ===
 app.include_router(api.book_router)
