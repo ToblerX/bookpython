@@ -126,6 +126,16 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.GenreAlreadyExists,
+        errors.create_exception_handler(
+            status.HTTP_404_NOT_FOUND,
+            initial_detail={
+                "message": "Genre already exists.",
+                "error_code": "genre_already_exists",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.GenreAlreadyAssociated,
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,

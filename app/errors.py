@@ -72,6 +72,12 @@ class GenreNotFound(BookPythonError):
     pass
 
 
+class GenreAlreadyExists(BookPythonError):
+    """The genre already exists."""
+
+    pass
+
+
 class GenreAlreadyAssociated(BookPythonError):
     """The genre was already associated with this book."""
 
