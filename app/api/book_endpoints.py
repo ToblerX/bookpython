@@ -10,8 +10,12 @@ book_router = APIRouter()
 
 @book_router.post("/books", tags=["Books"], response_model=schemas.BookModel)
 async def create_book(
-    book: schemas.BookCreate, current_session: Session = Depends(app_db.get_db)
+    book: schemas.BookCreate,
+    current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.create_book(book, current_session)
 
 
@@ -30,7 +34,10 @@ async def get_books(
 async def delete_book(
     book_id: int = Path(..., description="Id of the book to delete."),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.delete_book_by_id(book_id, current_session)
 
 
@@ -39,7 +46,10 @@ async def update_book(
     new_data: schemas.BookUpdate,
     book_id: int = Path(..., description="Id of the book to update."),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.update_book_by_id(new_data, book_id, current_session)
 
 
@@ -56,7 +66,10 @@ async def add_genre_for_book(
     book_id: int = Path(..., description="ID of the book"),
     genre_id: int = Query(..., description="ID of the genre to add"),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.add_genre_for_book(book_id, genre_id, current_session)
 
 
@@ -73,7 +86,10 @@ async def delete_genre_for_book(
     book_id: int = Path(..., description="ID of the book"),
     genre_id: int = Query(..., description="ID of the genre to delete"),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.delete_genre_for_book(book_id, genre_id, current_session)
 
 
@@ -82,7 +98,10 @@ async def add_image_for_book(
     file: UploadFile = File(...),
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     if not file.content_type.startswith("image/"):
         raise errors.FileMustBeImage()
     contents = await file.read()
@@ -102,7 +121,10 @@ async def delete_image_for_book(
     book_id: int = Path(..., description="ID of the book"),
     image_id: int = Query(..., description="ID of the image to delete."),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.delete_image_by_id(book_id, image_id, current_session)
 
 
@@ -111,7 +133,10 @@ async def delete_images_for_book(
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
     delete_cover: bool = False,
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.delete_all_images_for_book(book_id, current_session, delete_cover)
 
 
@@ -128,7 +153,10 @@ async def update_cover_for_book(
     file: UploadFile = File(...),
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     if not file.content_type.startswith("image/"):
         raise errors.FileMustBeImage()
     contents = await file.read()
@@ -139,5 +167,8 @@ async def update_cover_for_book(
 async def delete_cover_for_book(
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.delete_cover_for_book(book_id, current_session)

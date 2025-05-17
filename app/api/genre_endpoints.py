@@ -10,8 +10,12 @@ genre_router = APIRouter()
 
 @genre_router.post("/genres", tags=["Genres"], response_model=schemas.GenreModel)
 async def create_genre(
-    genre: schemas.GenreCreate, db: Session = Depends(app_db.get_db)
+    genre: schemas.GenreCreate,
+    db: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     check = (
         db.query(app_db.models.Genre)
         .filter(app_db.models.Genre.genre_name == genre.genre_name)
