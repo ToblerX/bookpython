@@ -3,7 +3,7 @@ from pydantic import BaseModel, validator
 from typing import Optional, List
 from .genre_schemas import GenreCreate
 
-from .. import errors
+from .. import errors, config
 
 
 class BookModel(BaseModel):
@@ -30,13 +30,17 @@ class BookBase(BaseModel):
 
     @validator("book_name")
     def validate_book_name(cls, value):
-        if value is not None and (len(value) < 3 or len(value) > 70):
+        if value is not None and (
+            len(value) < config.BOOK_NAME_MIN or len(value) > config.BOOK_NAME_MAX
+        ):
             raise errors.IncorrectBookNameLength()
         return value
 
     @validator("book_description")
     def validate_book_description(cls, value):
-        if value is not None and (len(value) < 100 or len(value) > 500):
+        if value is not None and (
+            len(value) < config.BOOK_DESC_MIN or len(value) > config.BOOK_DESC_MAX
+        ):
             raise errors.IncorrectBookDescriptionLength()
         return value
 

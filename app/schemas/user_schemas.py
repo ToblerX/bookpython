@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, EmailStr, validator
 import datetime, re
-from app import errors
+from app import errors, config
 
 
 class UserModel(BaseModel):
@@ -26,13 +26,13 @@ class UserCreate(BaseModel):
 
     @validator("username")
     def validate_username(cls, value):
-        if len(value) < 5 or len(value) > 15:
+        if len(value) < config.USERNAME_MIN or len(value) > config.USERNAME_MAX:
             raise errors.IncorrectUsernameLength()
         return value
 
     @validator("hashed_password")
     def validate_password(cls, value):
-        if len(value) < 8 or len(value) > 16:
+        if len(value) < config.PASSWORD_MIN or len(value) > config.PASSWORD_MAX:
             raise errors.IncorrectPasswordLength()
         if not re.search(r"[A-Z]", value) or not re.search(
             r'[!@#$%^&*(),.?":{}|<>]', value

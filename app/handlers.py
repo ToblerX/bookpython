@@ -1,6 +1,6 @@
 from fastapi import status
 from fastapi.responses import JSONResponse
-from . import errors
+from . import errors, config
 
 
 def register_exception_handlers(app):
@@ -60,7 +60,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "Username must be between 5 and 15 characters.",
+                "message": f"Username must be between {config.USERNAME_MIN} and {config.USERNAME_MAX} characters.",
                 "error_code": "incorrect_username_length",
             },
         ),
@@ -70,7 +70,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "Password must contain from 8 to 16 characters.",
+                "message": f"Password must contain from {config.PASSWORD_MIN} to {config.PASSWORD_MAX} characters.",
                 "error_code": "incorrect_password_length",
             },
         ),
@@ -160,7 +160,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "The book name must be between 3 and 70 characters long.",
+                "message": f"The book name must be between {config.BOOK_NAME_MIN} and {config.BOOK_NAME_MAX} characters long.",
                 "error_code": "incorrect_bookname_length",
             },
         ),
@@ -170,7 +170,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "The book description must be between 100 and 500 characters long.",
+                "message": f"The book description must be between {config.BOOK_DESC_MIN} and {config.BOOK_DESC_MAX} characters long.",
                 "error_code": "incorrect_book_description_length",
             },
         ),
@@ -210,7 +210,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": "Genre name must be from 3 to 30 characters long.",
+                "message": f"Genre name must be from {config.GENRE_NAME_MIN} to {config.GENRE_NAME_MAX} characters long.",
                 "error_code": "incorrect_genre_length",
             },
         ),

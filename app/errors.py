@@ -2,6 +2,8 @@ from typing import Any, Callable
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
 
+from app import config
+
 
 class BookPythonError(Exception):
     """Base class for exceptions in this api."""
@@ -29,13 +31,13 @@ class EmailAlreadyExists(BookPythonError):
 
 
 class IncorrectUsernameLength(BookPythonError):
-    """Username must be between 5 and 15 characters."""
+    f"""Username must be between {config.USERNAME_MIN} and {config.USERNAME_MAX} characters."""
 
     pass
 
 
 class IncorrectPasswordLength(BookPythonError):
-    """Password must contain at least one uppercase letter and one special character."""
+    f"""Password must be between {config.PASSWORD_MIN} and {config.PASSWORD_MAX} characters."""
 
     pass
 
@@ -90,13 +92,13 @@ class BookAlreadyExists(BookPythonError):
 
 
 class IncorrectBookNameLength(BookPythonError):
-    """The book name must be between 3 and 70 characters long."""
+    f"""The book name must be between {config.BOOK_NAME_MIN} and {config.BOOK_NAME_MAX} characters long."""
 
     pass
 
 
 class IncorrectBookDescriptionLength(BookPythonError):
-    """The book description must be between 100 and 500 characters long."""
+    f"""The book description must be between {config.BOOK_DESC_MIN} and {config.BOOK_DESC_MAX} characters long."""
 
     pass
 
@@ -115,7 +117,7 @@ class GenreAlreadyExists(BookPythonError):
 
 
 class IncorrectGenreLength(BookPythonError):
-    """Genre name must be between 3 and 30 characters."""
+    f"""Genre name must be between {config.GENRE_NAME_MIN} to {config.GENRE_NAME_MAX} characters."""
 
     pass
 
