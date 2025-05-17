@@ -156,6 +156,26 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.IncorrectBookNameLength,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "The book name must be between 3 and 70 characters long.",
+                "error_code": "incorrect_bookname_length",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.IncorrectBookDescriptionLength,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "The book description must be between 100 and 500 characters long.",
+                "error_code": "incorrect_book_description_length",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.GenreNotFound,
         errors.create_exception_handler(
             status.HTTP_404_NOT_FOUND,

@@ -89,6 +89,18 @@ class BookAlreadyExists(BookPythonError):
     pass
 
 
+class IncorrectBookNameLength(BookPythonError):
+    """The book name must be between 3 and 70 characters long."""
+
+    pass
+
+
+class IncorrectBookDescriptionLength(BookPythonError):
+    """The book description must be between 100 and 500 characters long."""
+
+    pass
+
+
 # === GENRES ===
 class GenreNotFound(BookPythonError):
     """The genre was not found."""
