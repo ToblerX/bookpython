@@ -176,6 +176,26 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.IncorrectGenreName,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Genre name mustn't contain any special characters.",
+                "error_code": "incorrect_genre_name",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.IncorrectGenreLength,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Genre name must be from 3 to 30 characters long.",
+                "error_code": "incorrect_genre_length",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.GenreAlreadyAssociated,
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,

@@ -102,6 +102,18 @@ class GenreAlreadyExists(BookPythonError):
     pass
 
 
+class IncorrectGenreLength(BookPythonError):
+    """Genre name must be between 3 and 30 characters."""
+
+    pass
+
+
+class IncorrectGenreName(BookPythonError):
+    """Genre name mustn't contain any special characters."""
+
+    pass
+
+
 class GenreAlreadyAssociated(BookPythonError):
     """The genre was already associated with this book."""
 
