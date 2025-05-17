@@ -46,6 +46,46 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.EmailAlreadyExists,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Email account already exists.",
+                "error_code": "email_exists",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.IncorrectUsernameLength,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Username must be between 5 and 15 characters.",
+                "error_code": "incorrect_username_length",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.IncorrectPasswordLength,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Password must contain from 8 to 16 characters.",
+                "error_code": "incorrect_password_length",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.IncorrectPasswordFormat,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": "Password must contain at least one uppercase letter and one special character.",
+                "error_code": "incorrect_password_format",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.WrongCredentials,
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,

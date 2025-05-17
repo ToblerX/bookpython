@@ -22,6 +22,30 @@ class UserAlreadyExists(BookPythonError):
     pass
 
 
+class EmailAlreadyExists(BookPythonError):
+    """The email is already registered."""
+
+    pass
+
+
+class IncorrectUsernameLength(BookPythonError):
+    """Username must be between 5 and 15 characters."""
+
+    pass
+
+
+class IncorrectPasswordLength(BookPythonError):
+    """Password must contain at least one uppercase letter and one special character."""
+
+    pass
+
+
+class IncorrectPasswordFormat(BookPythonError):
+    """Password must contain at least one uppercase letter and one special character."""
+
+    pass
+
+
 class WrongCredentials(BookPythonError):
     """The wrong credentials were provided."""
 

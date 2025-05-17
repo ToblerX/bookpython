@@ -20,6 +20,10 @@ async def create_user(
     if user_exists:
         raise errors.UserAlreadyExists()
 
+    email_exists = services.email_exists(user, current_session)
+    if email_exists:
+        raise errors.EmailAlreadyExists()
+
     new_user = services.create_user(user, current_session)
 
     await services.send_verification_email(user.email)

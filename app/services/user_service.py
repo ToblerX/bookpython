@@ -37,6 +37,15 @@ def user_exists(user: schemas.UserCreate, current_session: Session):
     return True if check_user else False
 
 
+def email_exists(user: schemas.UserCreate, current_session: Session):
+    check_user = (
+        current_session.query(app_db.User)
+        .filter(app_db.User.email == user.email)
+        .first()
+    )
+    return True if check_user else False
+
+
 def get_users(current_session: Session):
     return current_session.query(app_db.User).all()
 
