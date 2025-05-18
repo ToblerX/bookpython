@@ -12,6 +12,7 @@ class BookModel(BaseModel):
     book_author: str
     book_description: str
     book_price: float
+    supply: int
     book_cover_path: str
     genres: Optional[List[GenreCreate]] = None
     created_at: datetime
@@ -27,6 +28,7 @@ class BookBase(BaseModel):
     book_author: Optional[str] = None
     book_description: Optional[str] = None
     book_price: Optional[float] = None
+    supply: Optional[int] = None
 
     @validator("book_name")
     def validate_book_name(cls, value):
@@ -44,12 +46,25 @@ class BookBase(BaseModel):
             raise errors.IncorrectBookDescriptionLength()
         return value
 
+    @validator("book_price")
+    def validate_price(cls, value):
+        if value is not None and (value < 0):
+            raise errors.InvalidBookPrice()
+        return value
+
+    @validator("supply")
+    def validate_supply(cls, value):
+        if value is not None and (value < 0):
+            raise errors.InvalidBookSupply()
+        return value
+
 
 class BookCreate(BookBase):
     book_name: str
     book_author: str
     book_description: str
     book_price: float
+    supply: int = 0
 
 
 class BookUpdate(BookBase):

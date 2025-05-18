@@ -176,6 +176,26 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.InvalidBookPrice,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": f"The book price must be higher than 0.",
+                "error_code": "invalid_book_price",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.InvalidBookSupply,
+        errors.create_exception_handler(
+            status.HTTP_403_FORBIDDEN,
+            initial_detail={
+                "message": f"The book supply must be higher than 0.",
+                "error_code": "invalid_book_supply",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.GenreNotFound,
         errors.create_exception_handler(
             status.HTTP_404_NOT_FOUND,

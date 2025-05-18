@@ -8,6 +8,7 @@ from sqlalchemy import (
     ForeignKey,
     Float,
     Boolean,
+    CheckConstraint,
 )
 from sqlalchemy.orm import relationship
 from . import database
@@ -45,11 +46,13 @@ class Book(database.Base):
     book_author = Column(String, nullable=False)
     book_description = Column(String, nullable=False)
     book_price = Column(Float, nullable=False)
+    supply = Column(Integer, default=0)
     book_cover_path = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
+    __table_args__ = (CheckConstraint("supply >= 0", name="check_supply_non_negative"),)
 
     genres = relationship("Genre", secondary=book_genres)
 

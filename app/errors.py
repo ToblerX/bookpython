@@ -103,6 +103,18 @@ class IncorrectBookDescriptionLength(BookPythonError):
     pass
 
 
+class InvalidBookPrice(BookPythonError):
+    """Price must be higher than 0."""
+
+    pass
+
+
+class InvalidBookSupply(BookPythonError):
+    """Supply must be higher than 0."""
+
+    pass
+
+
 # === GENRES ===
 class GenreNotFound(BookPythonError):
     """The genre was not found."""
