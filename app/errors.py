@@ -110,7 +110,7 @@ class InvalidBookPrice(BookPythonError):
 
 
 class InvalidBookSupply(BookPythonError):
-    """Supply must be higher than 0."""
+    """Supply can't be lower than 0."""
 
     pass
 

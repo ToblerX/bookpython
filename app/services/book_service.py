@@ -303,3 +303,19 @@ def delete_cover_for_book(
         "prev_cover": old_cover,
         "new_cover": config.DEFAULT_COVER_PATH,
     }
+
+
+def edit_supply_by_id(
+    book_id: int,
+    amount: int,
+    current_session: Session,
+):
+    book = current_session.query(app_db.models.Book).get(book_id)
+    if not book:
+        raise errors.BookNotFound()
+    if amount < 0 and abs(amount) > book.supply:
+        raise errors.InvalidBookSupply()
+    book.supply += amount
+    current_session.commit()
+    current_session.refresh(book)
+    return book

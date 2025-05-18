@@ -172,3 +172,17 @@ async def delete_cover_for_book(
     if current_user.role != "admin":
         raise errors.OnlyAdminsAllowed()
     return services.delete_cover_for_book(book_id, current_session)
+
+
+@book_router.post(
+    "/books/{book_id}/supply", tags=["Books"], response_model=schemas.BookModel
+)
+async def edit_book_supply(
+    book_id: int = Path(..., description="ID of the book"),
+    amount: int = Query(..., description="Amount of added\subtracted books."),
+    current_session: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
+    return services.edit_supply_by_id(book_id, amount, current_session)

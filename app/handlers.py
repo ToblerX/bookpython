@@ -190,7 +190,7 @@ def register_exception_handlers(app):
         errors.create_exception_handler(
             status.HTTP_403_FORBIDDEN,
             initial_detail={
-                "message": f"The book supply must be higher than 0.",
+                "message": f"The book supply can't be lower than 0.",
                 "error_code": "invalid_book_supply",
             },
         ),
