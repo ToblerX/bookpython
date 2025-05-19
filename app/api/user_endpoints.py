@@ -92,3 +92,43 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return schemas.Token(access_token=access_token, token_type="bearer")
+
+
+@user_router.post("/password-reset-request", tags=["Users"])
+async def password_reset_request(email_data: schemas.PasswordResetRequestModel):
+    await services.send_password_reset_email(email_data.email)
+    return JSONResponse(
+        content={"message": "Please check your email to reset your password"},
+        status_code=status.HTTP_200_OK,
+    )
+
+
+@user_router.post("/password-reset-confirm/{token}", tags=["Users"])
+async def reset_account_password(
+    token: str,
+    password: schemas.PasswordResetConfirmModel,
+    current_session: Session = Depends(app_db.get_db),
+):
+    if password.new_password != password.confirm_new_password:
+        raise HTTPException(
+            detail="New password and confirm new password do not match",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    token_data = services.decode_url_safe_token(token)
+    user_email = token_data.get("email")
+    if user_email:
+        user = services.get_user_by_email(user_email, current_session)
+        if not user:
+            raise errors.UserNotFound()
+        services.update_user(
+            user,
+            {"hashed_password": services.get_password_hash(password.new_password)},
+            current_session,
+        )
+        return JSONResponse(
+            {"message": "Password reset successfully"}, status_code=status.HTTP_200_OK
+        )
+    return JSONResponse(
+        content={"message": "Error occurred during password reset"},
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    )

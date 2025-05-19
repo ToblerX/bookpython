@@ -158,3 +158,24 @@ async def send_verification_email(user_email: EmailStr):
     await mail.mail_engine.send_message(message)
 
     return {"status": "Email sent successfully"}
+
+
+async def send_password_reset_email(user_email: EmailStr):
+    token = create_url_safe_token(data={"email": user_email})
+
+    link = f"http://{config.DOMAIN}/password-reset-confirm/{token}"
+
+    html_message = f"""
+            <h1>Reset your password</h1>
+            <p>Please click this <a href="{link}">link</a> to reset your password</p>
+            """
+
+    message = mail.create_message(
+        recipients=[user_email],
+        subject="Reset your password",
+        body=html_message,
+    )
+
+    await mail.mail_engine.send_message(message)
+
+    return {"status": "Email sent successfully"}
