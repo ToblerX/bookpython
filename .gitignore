@@ -25,6 +25,5 @@ yarn-error.log
 # Environment variables
 .env
 
-# Alembic configuration and migrations
+# Alembic configuration
 alembic.ini
-app/db/migrations
