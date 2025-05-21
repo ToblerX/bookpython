@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from app import errors, config
 import re
 
@@ -6,7 +6,7 @@ import re
 class GenreCreate(BaseModel):
     genre_name: str
 
-    @validator("genre_name")
+    @field_validator("genre_name")
     def validate_genre_name(cls, value):
         if len(value) < config.GENRE_NAME_MIN or len(value) > config.GENRE_NAME_MAX:
             raise errors.IncorrectGenreLength()

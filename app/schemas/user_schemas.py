@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 import datetime, re
 from app import errors, config
 
@@ -24,13 +24,13 @@ class UserCreate(BaseModel):
     email: EmailStr
     hashed_password: str
 
-    @validator("username")
+    @field_validator("username")
     def validate_username(cls, value):
         if len(value) < config.USERNAME_MIN or len(value) > config.USERNAME_MAX:
             raise errors.IncorrectUsernameLength()
         return value
 
-    @validator("hashed_password")
+    @field_validator("hashed_password")
     def validate_password(cls, value):
         if len(value) < config.PASSWORD_MIN or len(value) > config.PASSWORD_MAX:
             raise errors.IncorrectPasswordLength()

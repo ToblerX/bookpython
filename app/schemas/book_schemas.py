@@ -1,5 +1,5 @@
 import datetime
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from .genre_schemas import GenreCreate
 
@@ -30,7 +30,7 @@ class BookBase(BaseModel):
     book_price: Optional[float] = None
     supply: Optional[int] = None
 
-    @validator("book_name")
+    @field_validator("book_name")
     def validate_book_name(cls, value):
         if value is not None and (
             len(value) < config.BOOK_NAME_MIN or len(value) > config.BOOK_NAME_MAX
@@ -38,7 +38,7 @@ class BookBase(BaseModel):
             raise errors.IncorrectBookNameLength()
         return value
 
-    @validator("book_description")
+    @field_validator("book_description")
     def validate_book_description(cls, value):
         if value is not None and (
             len(value) < config.BOOK_DESC_MIN or len(value) > config.BOOK_DESC_MAX
@@ -46,13 +46,13 @@ class BookBase(BaseModel):
             raise errors.IncorrectBookDescriptionLength()
         return value
 
-    @validator("book_price")
+    @field_validator("book_price")
     def validate_price(cls, value):
         if value is not None and (value < 0):
             raise errors.InvalidBookPrice()
         return value
 
-    @validator("supply")
+    @field_validator("supply")
     def validate_supply(cls, value):
         if value is not None and (value < 0):
             raise errors.InvalidBookSupply()
