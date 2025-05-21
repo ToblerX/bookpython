@@ -24,6 +24,7 @@ dependencies = [
     "fastapi-mail (>=1.4.2,<2.0.0)",
     "itsdangerous (>=2.2.0,<3.0.0)",
     "httpx (>=0.28.1,<0.29.0)",
+    "pytest (>=8.3.5,<9.0.0)",
 ]
 
 
