@@ -1,10 +1,9 @@
 import logging
 from datetime import timedelta, datetime
-from fastapi import HTTPException, Depends
+from fastapi import Depends
 from jwt.exceptions import InvalidTokenError
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
-from starlette import status
 from typing import Annotated
 from .. import schemas, config, mail, errors
 from .. import db as app_db

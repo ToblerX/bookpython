@@ -1,6 +1,6 @@
 from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session, joinedload
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from typing import Annotated
 from app import db as app_db
 from app import schemas, config, errors
@@ -9,8 +9,6 @@ import io
 import os
 import shutil
 import re
-
-from app.errors import BookAlreadyExists
 
 
 def create_book(book: schemas.BookCreate, current_session: Session):
@@ -26,7 +24,7 @@ def create_book(book: schemas.BookCreate, current_session: Session):
         .first()
     )
     if check:
-        raise BookAlreadyExists()
+        raise errors.BookAlreadyExists()
 
     os.mkdir(config.IMAGES_BOOKS_PATH + new_book.book_name)
     current_session.add(new_book)
