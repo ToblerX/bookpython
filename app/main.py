@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from . import api, handlers
+from . import api, handlers, middleware
 import app.db as database
 from .init_db import init_db
 
@@ -21,6 +21,8 @@ app = FastAPI(
 )
 
 handlers.register_exception_handlers(app)
+
+middleware.register_middleware(app)
 
 ## === ROUTERS ===
 app.include_router(api.book_router)
