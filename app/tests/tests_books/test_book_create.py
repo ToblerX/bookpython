@@ -3,7 +3,12 @@ from unittest.mock import patch
 import pytest
 
 from app import services
-from .test_conf import override_get_current_active_user_user, client, app, override_get_current_active_user_admin
+from .test_conf import (
+    override_get_current_active_user_user,
+    client,
+    app,
+    override_get_current_active_user_admin,
+)
 
 
 @pytest.fixture
