@@ -1,5 +1,9 @@
 from app import schemas
 from datetime import datetime
+from fastapi.testclient import TestClient
+from app.main import app
+
+client = TestClient(app)
 
 mock_books = [
     {

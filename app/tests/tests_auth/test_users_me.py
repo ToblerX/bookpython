@@ -1,9 +1,6 @@
-from fastapi.testclient import TestClient
-from app.main import app
 from app import services
-from .test_conf import override_get_current_active_user_user
+from .test_conf import override_get_current_active_user_user, client, app
 
-client = TestClient(app)
 
 
 def test_get_users_me_unauthorized():

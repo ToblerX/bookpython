@@ -1,18 +1,9 @@
 from datetime import datetime
-
-from fastapi.testclient import TestClient
-from app.main import app
 from unittest.mock import patch
-from .test_conf import (
-    mock_books,
-    override_get_current_active_user_admin,
-    override_get_current_active_user_user,
-)
 import pytest
 
-from ... import services
-
-client = TestClient(app)
+from app import services
+from .test_conf import override_get_current_active_user_user, client, app, override_get_current_active_user_admin
 
 
 @pytest.fixture
