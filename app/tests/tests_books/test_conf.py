@@ -41,3 +41,17 @@ def override_get_current_active_user_admin():
         created_at=datetime.now(),
         updated_at=datetime.now(),
     )
+
+
+# Override dependency for non-admin user
+def override_get_current_active_user_user():
+    return schemas.UserModel(
+        user_id=10,
+        username="user",
+        email="user@example.com",
+        disabled=False,
+        verified=True,
+        role="user",
+        created_at=datetime.now(),
+        updated_at=datetime.now(),
+    )
