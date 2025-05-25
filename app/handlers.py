@@ -24,6 +24,16 @@ def register_exception_handlers(app):
             status_code=status.HTTP_401_UNAUTHORIZED,
         )
 
+    @app.exception_handler(422)
+    async def unprocessable_entity_error(request, exception):
+        return JSONResponse(
+            content={
+                "message": "The entity you entered is not valid.",
+                "error_code": "unprocessable_entity",
+            },
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        )
+
     ## === ERROR HANDLERS ===
     app.add_exception_handler(
         errors.UserNotFound,
