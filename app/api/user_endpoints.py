@@ -1,6 +1,7 @@
 from datetime import timedelta
 from typing import List, Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.background import BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
@@ -14,6 +15,7 @@ user_router = APIRouter()
 @user_router.post("/signup", tags=["Users"])
 async def create_user(
     user: schemas.UserCreate,
+    bg_tasks: BackgroundTasks,
     current_session: Session = Depends(app_db.get_db),
 ):
     user_exists = services.user_exists(user, current_session)
@@ -26,7 +28,7 @@ async def create_user(
 
     new_user = services.create_user(user, current_session)
 
-    await services.send_verification_email(user.email)
+    bg_tasks.add_task(services.send_verification_email, user.email)
 
     return {
         "message": "Account created, check your email to verify your account",
