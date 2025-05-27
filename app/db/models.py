@@ -21,6 +21,14 @@ book_genres = Table(
     Column("genre_id", Integer, ForeignKey("genres.genre_id"), primary_key=True),
 )
 
+# Association table for many-to-many relationship between books and users (wishlist)
+user_books_wishlist = Table(
+    "user_books",
+    database.Base.metadata,
+    Column("book_id", Integer, ForeignKey("books.book_id"), primary_key=True),
+    Column("user_id", Integer, ForeignKey("users.user_id"), primary_key=True),
+)
+
 
 class User(database.Base):
     __tablename__ = "users"
