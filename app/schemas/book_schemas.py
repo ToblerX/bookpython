@@ -69,3 +69,6 @@ class BookCreate(BookBase):
 
 class BookUpdate(BookBase):
     pass
+
+class BookOut(BaseModel):
+    book_id: int

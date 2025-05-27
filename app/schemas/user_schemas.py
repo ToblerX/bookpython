@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr, field_validator
 import datetime, re
-from app import errors, config
+from app import errors, config, schemas
 
 
 class UserModel(BaseModel):
@@ -11,6 +11,7 @@ class UserModel(BaseModel):
     disabled: bool
     verified: bool
     role: str
+    wishlist: Optional[List[schemas.BookOut]] = None
     created_at: datetime.datetime
     updated_at: datetime.datetime
 

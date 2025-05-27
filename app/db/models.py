@@ -45,6 +45,8 @@ class User(database.Base):
         DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
     )
 
+    wishlist = relationship("Book", secondary=user_books_wishlist)
+
 
 class Book(database.Base):
     __tablename__ = "books"
