@@ -206,6 +206,26 @@ def register_exception_handlers(app):
         ),
     )
     app.add_exception_handler(
+        errors.BookNotAssociated,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "The book is not in the wishlist.",
+                "error_code": "book_not_associated",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.BookAlreadyAssociated,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "The book is already in the wishlist.",
+                "error_code": "book_already_associated",
+            },
+        ),
+    )
+    app.add_exception_handler(
         errors.GenreNotFound,
         errors.create_exception_handler(
             status.HTTP_404_NOT_FOUND,

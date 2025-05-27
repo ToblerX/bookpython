@@ -1,6 +1,6 @@
 from datetime import timedelta
 from typing import List, Annotated
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from fastapi.background import BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -134,3 +134,35 @@ async def reset_account_password(
         content={"message": "Error occurred during password reset"},
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
     )
+
+
+@user_router.post("/users/me/wishlist", tags=["Users"])
+async def add_user_wishlist(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    book_id: int = Query(..., description="Book id to add to the wishlist."),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.add_to_wishlist(current_user.user_id, book_id, current_session)
+
+
+@user_router.get("/users/me/wishlist", tags=["Users"])
+async def get_user_wishlist(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.get_wishlist(current_user.user_id, current_session)
+
+
+@user_router.delete("/users/me/wishlist", tags=["Users"])
+async def delete_from_user_wishlist(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    book_id: int = Query(..., description="Book id to delete from the wishlist."),
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.delete_from_wishlist(current_user.user_id, book_id, current_session)

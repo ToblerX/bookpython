@@ -43,6 +43,7 @@ class UserCreate(BaseModel):
 
 
 class UserDecode(BaseModel):
+    user_id: int
     username: str
 
 

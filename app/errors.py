@@ -115,6 +115,18 @@ class InvalidBookSupply(BookPythonError):
     pass
 
 
+class BookNotAssociated(BookPythonError):
+    """The book is not in the wishlist."""
+
+    pass
+
+
+class BookAlreadyAssociated(BookPythonError):
+    """The book is already in the wishlist."""
+
+    pass
+
+
 # === GENRES ===
 class GenreNotFound(BookPythonError):
     """The genre was not found."""
