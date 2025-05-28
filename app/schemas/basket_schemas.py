@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
 
@@ -21,8 +21,7 @@ class BookInBasket(BaseModel):
     book_author: str
     book_price: float
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BasketItemOut(BaseModel):
@@ -30,8 +29,7 @@ class BasketItemOut(BaseModel):
     book: BookInBasket
     quantity: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BasketItemDB(BasketBase):
