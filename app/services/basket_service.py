@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from .. import schemas
+from .. import schemas, errors
 from .. import db as app_db
 
 
@@ -45,7 +45,7 @@ def delete_from_basket(user_id: int, book_id: int, current_session: Session):
     )
 
     if not item:
-        raise HTTPException(status_code=404, detail="Book not found in basket.")
+        raise errors.BookNotFoundInBasket
 
     current_session.delete(item)
     current_session.commit()
@@ -65,10 +65,10 @@ def update_basket_quantity(
     )
 
     if not item:
-        raise HTTPException(status_code=404, detail="Book not found in basket.")
+        raise errors.BookNotFoundInBasket
 
     if update_data.quantity is None or update_data.quantity < 1:
-        raise HTTPException(status_code=400, detail="Quantity must be at least 1.")
+        raise errors.QuantityError
 
     item.quantity = update_data.quantity
     current_session.commit()

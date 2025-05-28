@@ -315,4 +315,24 @@ def register_exception_handlers(app):
             },
         ),
     )
+    app.add_exception_handler(
+        errors.BookNotFoundInBasket,
+        errors.create_exception_handler(
+            status.HTTP_404_NOT_FOUND,
+            initial_detail={
+                "message": "The requested book was not found in the basket.",
+                "error_code": "book_not_found_in_basket",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.QuantityError,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "Quantity must be at least 1.",
+                "error_code": "quantity_error",
+            },
+        ),
+    )
     return {"message": "Exception handlers initialized successfully."}

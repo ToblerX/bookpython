@@ -183,6 +183,19 @@ class CantDeleteDefaultCover(BookPythonError):
     pass
 
 
+# === BASKET ===
+class BookNotFoundInBasket(BookPythonError):
+    """The requested book was not found in the basket."""
+
+    pass
+
+
+class QuantityError(BookPythonError):
+    """Quantity must be at least 1."""
+
+    pass
+
+
 ## === EXCEPTION HANDLER ===
 def create_exception_handler(
     status_code: int, initial_detail: Any
