@@ -87,3 +87,7 @@ class BasketItem(database.Base):
 
     user = relationship("User", back_populates="basket_items")
     book = relationship("Book", back_populates="basket_items")
+
+
+# TRUNCATE TABLE users, genres, books, user_books, book_genres, baskets RESTART IDENTITY CASCADE;
+# DROP TABLE users, genres, user_books, book_genres, books, baskets
