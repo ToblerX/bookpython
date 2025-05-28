@@ -46,6 +46,9 @@ class User(database.Base):
     )
 
     wishlist = relationship("Book", secondary=user_books_wishlist)
+    basket_items = relationship(
+        "BasketItem", back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class Book(database.Base):
@@ -65,6 +68,7 @@ class Book(database.Base):
     __table_args__ = (CheckConstraint("supply >= 0", name="check_supply_non_negative"),)
 
     genres = relationship("Genre", secondary=book_genres)
+    basket_items = relationship("BasketItem", back_populates="book")
 
 
 class Genre(database.Base):
@@ -72,3 +76,14 @@ class Genre(database.Base):
 
     genre_id = Column(Integer, primary_key=True, autoincrement=True)
     genre_name = Column(String, nullable=False, unique=True)
+
+
+class BasketItem(database.Base):
+    __tablename__ = "baskets"
+
+    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
+    book_id = Column(Integer, ForeignKey("books.book_id"), primary_key=True)
+    quantity = Column(Integer, nullable=False, default=1)
+
+    user = relationship("User", back_populates="basket_items")
+    book = relationship("Book", back_populates="basket_items")
