@@ -50,6 +50,16 @@ class User(database.Base):
         "BasketItem", back_populates="user", cascade="all, delete-orphan"
     )
 
+    # Delivery data fields
+    first_name = Column(String, nullable=True)
+    second_name = Column(String, nullable=True)
+    street_address = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    state = Column(String, nullable=True)
+    postal_code = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    phone_number = Column(String, nullable=True)
+
 
 class Book(database.Base):
     __tablename__ = "books"
