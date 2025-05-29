@@ -47,6 +47,14 @@ def create_admin_user():
             verified=True,
             hashed_password=services.get_password_hash(config.ADMIN_PASSWORD),
             disabled=False,
+            first_name="Admin",
+            second_name="User",
+            street_address="123 Admin St",
+            city="Adminville",
+            state="Admin State",
+            postal_code="00000",
+            country="Adminland",
+            phone_number="+10000000000",
         )
         current_session.add(admin)
         current_session.commit()

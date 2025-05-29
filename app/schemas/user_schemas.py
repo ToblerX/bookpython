@@ -14,6 +14,17 @@ class UserModel(BaseModel):
     wishlist: Optional[List[schemas.BookOut]] = None
     created_at: datetime.datetime
     updated_at: datetime.datetime
+    first_name: Optional[str] = None
+    second_name: Optional[str] = None
+    street_address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
+    phone_number: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 
 class UserInDb(UserModel):
