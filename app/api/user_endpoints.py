@@ -76,6 +76,20 @@ async def get_user(
     return current_user
 
 
+@user_router.patch("/users/me", tags=["Users"], response_model=schemas.UserModel)
+async def update_user_profile(
+    user_update: schemas.UserUpdate,
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    session: Session = Depends(app_db.get_db),
+):
+    user_in_db = services.get_user(current_user.username, session)
+    if not user_in_db:
+        raise errors.UserNotFound()
+    return services.update_user_profile(user_in_db, user_update, session)
+
+
 @user_router.post("/token", response_model=schemas.Token, tags=["Authentication"])
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],

@@ -251,3 +251,20 @@ def get_wishlist(user_id: int, current_session: Session):
         .filter(app_db.models.user_books_wishlist.c.user_id == user_id)
         .all()
     ]
+
+
+def update_user_profile(
+    user: app_db.User, user_update: schemas.UserUpdate, current_session: Session
+):
+    update_data = user_update.dict(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(user, key, value)
+
+    if user_update.first_name:
+        user.first_name = user.first_name.title()
+    if user_update.second_name:
+        user.second_name = user.second_name.title()
+
+    current_session.commit()
+    current_session.refresh(user)
+    return user

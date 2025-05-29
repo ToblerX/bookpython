@@ -79,3 +79,15 @@ class PasswordResetRequestModel(BaseModel):
 class PasswordResetConfirmModel(BaseModel):
     new_password: str
     confirm_new_password: str
+
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    first_name: Optional[str] = None
+    second_name: Optional[str] = None
+    street_address: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    postal_code: Optional[str] = None
+    country: Optional[str] = None
+    phone_number: Optional[str] = None
