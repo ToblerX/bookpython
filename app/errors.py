@@ -196,6 +196,25 @@ class QuantityError(BookPythonError):
     pass
 
 
+class BasketEmpty(BookPythonError):
+    """Your basket is empty."""
+
+    pass
+
+
+# === ORDERS ===
+class SupplyTooSmall(BookPythonError):
+    """Not enough supply to sell."""
+
+    pass
+
+
+class UserDataUndefined(BookPythonError):
+    """Required user data is not defined."""
+
+    pass
+
+
 ## === EXCEPTION HANDLER ===
 def create_exception_handler(
     status_code: int, initial_detail: Any

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session, selectinload
 
-from .. import schemas
+from .. import schemas, errors
 from ..db import models
 from ..db.models import Order, Book
 from ..schemas import OrderCreate
@@ -17,13 +17,10 @@ def create_order(order_data: OrderCreate, current_session: Session):
     for item in order_data.items:
         book = book_map.get(item.book_id)
         if not book:
-            raise ValueError(f"Book ID {item.book_id} not found.")
+            raise errors.BookNotFound
 
         if book.supply < item.quantity:
-            raise ValueError(
-                f"Not enough stock for book ID {book.book_id}. "
-                f"Available: {book.supply}, Requested: {item.quantity}"
-            )
+            raise errors.SupplyTooSmall
 
         total += book.book_price * item.quantity
 

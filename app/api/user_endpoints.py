@@ -260,15 +260,12 @@ async def create_order(
         user_full.phone_number,
     ]
     if any(field is None or field == "" for field in required_fields):
-        raise HTTPException(
-            status_code=400,
-            detail="Please complete all delivery data and provide an email in your profile before placing an order.",
-        )
+        raise errors.UserDataUndefined
 
     basket_items = services.get_basket(current_user.user_id, current_session)
 
     if not basket_items:
-        raise HTTPException(status_code=400, detail="Your basket is empty.")
+        raise errors.BasketEmpty
 
     total_price = sum(item.book.book_price * item.quantity for item in basket_items)
 

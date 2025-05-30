@@ -335,4 +335,34 @@ def register_exception_handlers(app):
             },
         ),
     )
+    app.add_exception_handler(
+        errors.BasketEmpty,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "Your basket is empty.",
+                "error_code": "basket_empty",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.SupplyTooSmall,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "Not enough supply to sell.",
+                "error_code": "not_enough_supply",
+            },
+        ),
+    )
+    app.add_exception_handler(
+        errors.UserDataUndefined,
+        errors.create_exception_handler(
+            status.HTTP_400_BAD_REQUEST,
+            initial_detail={
+                "message": "Required user data is not defined.",
+                "error_code": "user_data_undefined",
+            },
+        ),
+    )
     return {"message": "Exception handlers initialized successfully."}
