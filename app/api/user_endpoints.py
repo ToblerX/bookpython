@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import List, Annotated
+from typing import List, Annotated, Literal
 from fastapi import APIRouter, Depends, HTTPException, status, Query, Body
 from fastapi.background import BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
@@ -237,7 +237,9 @@ async def create_order(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
     ],
-    delivery_method: str = Query(..., description="Delivery method chosen by the user"),
+    delivery_method: Literal["courier", "pickup", "parcel_locker"] = Query(
+        ..., description="Delivery method: 'courier', 'pickup', or 'parcel_locker'"
+    ),
     current_session: Session = Depends(app_db.get_db),
 ):
     user_full = (
