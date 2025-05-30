@@ -29,6 +29,15 @@ user_books_wishlist = Table(
     Column("user_id", Integer, ForeignKey("users.user_id"), primary_key=True),
 )
 
+# Association table for many-to-many relationship between orders and books
+order_items = Table(
+    "order_items",
+    database.Base.metadata,
+    Column("order_id", Integer, ForeignKey("orders.order_id"), primary_key=True),
+    Column("book_id", Integer, ForeignKey("books.book_id"), primary_key=True),
+    Column("quantity", Integer, nullable=False, default=1),
+)
+
 
 class User(database.Base):
     __tablename__ = "users"
@@ -97,6 +106,23 @@ class BasketItem(database.Base):
 
     user = relationship("User", back_populates="basket_items")
     book = relationship("Book", back_populates="basket_items")
+
+
+class Order(database.Base):
+    __tablename__ = "orders"
+
+    order_id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    delivery_method = Column(String, nullable=False)
+    total_cost = Column(Float, nullable=False)
+    status = Column(String, nullable=False, default="pending")
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(
+        DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow
+    )
+
+    user = relationship("User", backref="orders")
+    books = relationship("Book", secondary=order_items)
 
 
 # TRUNCATE TABLE users, genres, books, user_books, book_genres, baskets RESTART IDENTITY CASCADE;
