@@ -29,15 +29,6 @@ user_books_wishlist = Table(
     Column("user_id", Integer, ForeignKey("users.user_id"), primary_key=True),
 )
 
-# Association table for many-to-many relationship between orders and books
-order_items = Table(
-    "order_items",
-    database.Base.metadata,
-    Column("order_id", Integer, ForeignKey("orders.order_id"), primary_key=True),
-    Column("book_id", Integer, ForeignKey("books.book_id"), primary_key=True),
-    Column("quantity", Integer, nullable=False, default=1),
-)
-
 
 class User(database.Base):
     __tablename__ = "users"
@@ -108,6 +99,17 @@ class BasketItem(database.Base):
     book = relationship("Book", back_populates="basket_items")
 
 
+class OrderItem(database.Base):
+    __tablename__ = "order_items"
+
+    order_id = Column(Integer, ForeignKey("orders.order_id"), primary_key=True)
+    book_id = Column(Integer, ForeignKey("books.book_id"), primary_key=True)
+    quantity = Column(Integer, nullable=False, default=1)
+
+    order = relationship("Order", back_populates="order_items")
+    book = relationship("Book")
+
+
 class Order(database.Base):
     __tablename__ = "orders"
 
@@ -122,7 +124,9 @@ class Order(database.Base):
     )
 
     user = relationship("User", backref="orders")
-    books = relationship("Book", secondary=order_items)
+    order_items = relationship(
+        "OrderItem", back_populates="order", cascade="all, delete-orphan"
+    )
 
 
 # TRUNCATE TABLE users, genres, books, user_books, book_genres, baskets RESTART IDENTITY CASCADE;
