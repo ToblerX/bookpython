@@ -3,3 +3,4 @@ from .user_schemas import *
 from .filter_schemas import *
 from .genre_schemas import *
 from .basket_schemas import *
+from .order_schemas import *
