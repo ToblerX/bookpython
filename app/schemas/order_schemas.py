@@ -1,11 +1,20 @@
 from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
+from . import BookCreate
 
 
-class OrderItemSchema(BaseModel):
+class OrderItemCreate(BaseModel):
     book_id: int
-    quantity: int = Field(..., gt=0)
+    quantity: int
+
+
+class OrderItemRead(BaseModel):
+    book: BookCreate
+    quantity: int
+
+    class Config:
+        orm_mode = True
 
 
 class OrderBase(BaseModel):
@@ -16,13 +25,13 @@ class OrderBase(BaseModel):
 
 class OrderCreate(OrderBase):
     user_id: int
-    items: List[OrderItemSchema]
+    items: List[OrderItemCreate]
 
 
 class OrderRead(OrderBase):
     order_id: int
     user_id: int
-    items: List[OrderItemSchema]
+    items: List[OrderItemRead]
     created_at: datetime
     updated_at: datetime
 

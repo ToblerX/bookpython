@@ -229,3 +229,54 @@ async def update_basket_quantity(
     return services.update_basket_quantity(
         current_user.user_id, book_id, update_data, current_session
     )
+
+
+@user_router.post("/users/me/orders", tags=["Orders"])
+async def create_order(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    delivery_method: str = Query(..., description="Delivery method chosen by the user"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    # Step 1: Get user's basket
+    basket_items = services.get_basket(current_user.user_id, current_session)
+
+    if not basket_items:
+        raise HTTPException(status_code=400, detail="Your basket is empty.")
+
+    # Step 2: Calculate total price
+    total_price = sum(item.book.book_price * item.quantity for item in basket_items)
+
+    # Step 3: Convert basket items to order items
+    order_items = [
+        schemas.OrderItemCreate(book_id=item.book.book_id, quantity=item.quantity)
+        for item in basket_items
+    ]
+
+    # Step 4: Prepare order data including delivery_method and total_price
+    order_data = schemas.OrderCreate(
+        user_id=current_user.user_id,
+        items=order_items,
+        delivery_method=delivery_method,
+        total_cost=total_price,
+    )
+
+    # Step 5: Create the order
+    order = services.create_order(order_data, current_session)
+
+    # Step 6: Clear the user's basket if order was successful
+    services.clear_basket(current_user.user_id, current_session)
+
+    return order
+
+
+@user_router.get("/users/me/orders", tags=["Orders"])
+async def get_user_orders(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    current_session: Session = Depends(app_db.get_db),
+):
+    orders = services.get_user_orders(current_user.user_id, current_session)
+    return orders

@@ -72,3 +72,8 @@ def update_basket_quantity(
     item.quantity = update_data.quantity
     current_session.commit()
     return {"message": "Basket item updated.", "quantity": item.quantity}
+
+
+def clear_basket(user_id: int, current_session: Session):
+    current_session.query(app_db.models.BasketItem).filter_by(user_id=user_id).delete()
+    current_session.commit()
