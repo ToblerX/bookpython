@@ -8,6 +8,7 @@ from starlette.responses import JSONResponse
 
 from .. import schemas, services, config, errors
 from .. import db as app_db
+from ..db import models
 
 user_router = APIRouter()
 
@@ -239,6 +240,29 @@ async def create_order(
     delivery_method: str = Query(..., description="Delivery method chosen by the user"),
     current_session: Session = Depends(app_db.get_db),
 ):
+    user_full = (
+        current_session.query(models.User)
+        .filter(models.User.user_id == current_user.user_id)
+        .first()
+    )
+    # Check required delivery fields + email
+    required_fields = [
+        user_full.email,
+        user_full.first_name,
+        user_full.second_name,
+        user_full.street_address,
+        user_full.city,
+        user_full.state,
+        user_full.postal_code,
+        user_full.country,
+        user_full.phone_number,
+    ]
+    if any(field is None or field == "" for field in required_fields):
+        raise HTTPException(
+            status_code=400,
+            detail="Please complete all delivery data and provide an email in your profile before placing an order.",
+        )
+
     basket_items = services.get_basket(current_user.user_id, current_session)
 
     if not basket_items:
@@ -261,7 +285,6 @@ async def create_order(
     order = services.create_order(order_data, current_session)
     services.clear_basket(current_user.user_id, current_session)
 
-    # Return JSONResponse with custom details
     return JSONResponse(
         status_code=201,
         content={
