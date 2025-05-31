@@ -8,7 +8,7 @@ from app import services, schemas
 genre_router = APIRouter()
 
 
-@genre_router.post("/genres", tags=["Genres"], response_model=schemas.GenreModel)
+@genre_router.post("/genres", tags=["Genres Admin"], response_model=schemas.GenreModel)
 async def create_genre(
     genre: schemas.GenreCreate,
     db: Session = Depends(app_db.get_db),
@@ -26,18 +26,28 @@ async def create_genre(
     return services.create_genre(genre, db)
 
 
-@genre_router.get("/genres", tags=["Genres"], response_model=List[schemas.GenreModel])
-async def get_genres(db: Session = Depends(app_db.get_db)):
+@genre_router.get(
+    "/genres", tags=["Genres Admin"], response_model=List[schemas.GenreModel]
+)
+async def get_genres(
+    db: Session = Depends(app_db.get_db),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.get_genres(db)
 
 
 @genre_router.delete(
-    "/genres/{genre_id}", tags=["Genres"], response_model=schemas.GenreModel
+    "/genres/{genre_id}", tags=["Genres Admin"], response_model=schemas.GenreModel
 )
 async def delete_genre_by_id(
     genre_id: int = Path(..., description="ID of genre to delete."),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
     db: Session = Depends(app_db.get_db),
 ):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     check = (
         db.query(app_db.models.Genre)
         .filter(app_db.models.Genre.genre_id == genre_id)
