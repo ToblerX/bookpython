@@ -56,6 +56,7 @@ middleware.register_middleware(app)
 app.include_router(api.book_router)
 app.include_router(api.user_router)
 app.include_router(api.genre_router)
+app.include_router(api.wishlist_router)
 app.include_router(api.basket_router)
 
 app.include_router(api.order_router)
