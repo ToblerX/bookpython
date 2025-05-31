@@ -37,6 +37,22 @@ def add_to_wishlist(user_id: int, book_id: int, current_session: Session):
     )
 
 
+def get_wishlist(user_id: int, current_session: Session):
+    user = current_session.query(app_db.User).get(user_id)
+    if not user:
+        raise errors.UserNotFound()
+    return [
+        book
+        for book in current_session.query(app_db.models.Book)
+        .join(
+            app_db.models.user_books_wishlist,
+            app_db.models.Book.book_id == app_db.models.user_books_wishlist.c.book_id,
+        )
+        .filter(app_db.models.user_books_wishlist.c.user_id == user_id)
+        .all()
+    ]
+
+
 def delete_from_wishlist(user_id: int, book_id: int, current_session: Session):
     user = current_session.query(app_db.User).get(user_id)
     if not user:
@@ -59,17 +75,12 @@ def delete_from_wishlist(user_id: int, book_id: int, current_session: Session):
         return errors.BookNotAssociated
 
 
-def get_wishlist(user_id: int, current_session: Session):
-    user = current_session.query(app_db.User).get(user_id)
+def delete_all_from_wishlist(user_id: int, current_session: Session):
+    user = current_session.get(app_db.User, user_id)
     if not user:
         raise errors.UserNotFound()
-    return [
-        book
-        for book in current_session.query(app_db.models.Book)
-        .join(
-            app_db.models.user_books_wishlist,
-            app_db.models.Book.book_id == app_db.models.user_books_wishlist.c.book_id,
-        )
-        .filter(app_db.models.user_books_wishlist.c.user_id == user_id)
-        .all()
-    ]
+
+    user.wishlist.clear()
+    current_session.commit()
+
+    return JSONResponse({"message": "All books removed from wishlist."})
