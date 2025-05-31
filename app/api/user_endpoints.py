@@ -1,6 +1,6 @@
 from datetime import timedelta
-from typing import List, Annotated, Literal
-from fastapi import APIRouter, Depends, HTTPException, status, Query, Body
+from typing import List, Annotated
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.background import BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -8,7 +8,6 @@ from starlette.responses import JSONResponse
 
 from .. import schemas, services, config, errors
 from .. import db as app_db
-from ..db import models
 
 user_router = APIRouter()
 
