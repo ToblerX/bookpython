@@ -305,3 +305,17 @@ async def get_user_orders(
 ):
     orders = services.get_user_orders(current_user.user_id, current_session)
     return orders
+
+
+@user_router.patch("/users/me/orders/{order_id}", tags=["Orders"])
+async def update_order_status(
+    order_id: int,
+    order_status: Literal["pending", "completed", "cancelled"] = Query(
+        ..., description="Delivery method: 'pending', 'completed', or 'cancelled'"
+    ),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed
+    return services.set_order_status(order_id, order_status, current_session)

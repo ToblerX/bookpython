@@ -76,3 +76,11 @@ def get_user_orders(user_id: int, current_session: Session):
         .order_by(Order.created_at.desc())
         .all()
     )
+
+
+def set_order_status(order_id: int, status: str, current_session: Session):
+    order = current_session.query(Order).filter(Order.order_id == order_id).first()
+    order.status = status
+    current_session.commit()
+    current_session.refresh(order)
+    return order
