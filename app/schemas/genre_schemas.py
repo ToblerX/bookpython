@@ -17,3 +17,7 @@ class GenreCreate(BaseModel):
 
 class GenreModel(GenreCreate):
     genre_id: int
+
+
+class GenreUpdate(GenreCreate):
+    genre_name: str | None = None

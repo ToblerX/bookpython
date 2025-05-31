@@ -25,3 +25,18 @@ def delete_genre_by_id(genre_id: int, current_session: Session):
     current_session.delete(del_genre)
     current_session.commit()
     return del_genre
+
+
+def update_genre_by_id(
+    genre_id: int, genre_data: schemas.GenreUpdate, current_session: Session
+):
+    genre = (
+        current_session.query(app_db.models.Genre)
+        .filter(app_db.models.Genre.genre_id == genre_id)
+        .first()
+    )
+    for key, value in genre_data.dict().items():
+        setattr(genre, key, value)
+    current_session.commit()
+    current_session.refresh(genre)
+    return genre

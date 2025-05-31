@@ -38,6 +38,18 @@ async def get_genres(
     return services.get_genres(db)
 
 
+@genre_router.put("/genres/{genre_id}", tags=["Genres Admin"])
+async def update_genre(
+    genre_data: schemas.GenreUpdate,
+    genre_id: int = Path(..., description="ID of genre to update."),
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    db: Session = Depends(app_db.get_db),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
+    return services.update_genre_by_id(genre_id, genre_data, db)
+
+
 @genre_router.delete(
     "/genres/{genre_id}", tags=["Genres Admin"], response_model=schemas.GenreModel
 )
