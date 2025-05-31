@@ -37,7 +37,7 @@ async def create_user(
     }
 
 
-@user_router.get("/verify/{token}", tags=["Users"])
+@user_router.get("/verify/{token}", tags=["Authentication"])
 async def verify_user_account(
     token: str,
     current_session: Session = Depends(app_db.get_db),
@@ -58,7 +58,7 @@ async def verify_user_account(
     )
 
 
-@user_router.get("/users", tags=["Users"], response_model=List[schemas.UserModel])
+@user_router.get("/users", tags=["Users Admin"], response_model=List[schemas.UserModel])
 async def get_users(
     current_user: schemas.UserOut = Depends(services.get_current_active_user),
     current_session: Session = Depends(app_db.get_db),
@@ -151,7 +151,7 @@ async def reset_account_password(
     )
 
 
-@user_router.post("/users/me/wishlist", tags=["Users"])
+@user_router.post("/users/me/wishlist", tags=["Wishlist"])
 async def add_user_wishlist(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -162,7 +162,7 @@ async def add_user_wishlist(
     return services.add_to_wishlist(current_user.user_id, book_id, current_session)
 
 
-@user_router.get("/users/me/wishlist", tags=["Users"])
+@user_router.get("/users/me/wishlist", tags=["Wishlist"])
 async def get_user_wishlist(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -172,7 +172,7 @@ async def get_user_wishlist(
     return services.get_wishlist(current_user.user_id, current_session)
 
 
-@user_router.delete("/users/me/wishlist", tags=["Users"])
+@user_router.delete("/users/me/wishlist", tags=["Wishlist"])
 async def delete_from_user_wishlist(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -183,7 +183,7 @@ async def delete_from_user_wishlist(
     return services.delete_from_wishlist(current_user.user_id, book_id, current_session)
 
 
-@user_router.post("/users/me/basket", tags=["Users"])
+@user_router.post("/users/me/basket", tags=["Basket"])
 async def add_to_basket(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -197,7 +197,7 @@ async def add_to_basket(
     )
 
 
-@user_router.get("/users/me/basket", tags=["Users"])
+@user_router.get("/users/me/basket", tags=["Basket"])
 async def get_user_basket(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -207,7 +207,7 @@ async def get_user_basket(
     return services.get_basket(current_user.user_id, current_session)
 
 
-@user_router.delete("/users/me/basket", tags=["Users"])
+@user_router.delete("/users/me/basket", tags=["Basket"])
 async def delete_from_basket(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -218,7 +218,7 @@ async def delete_from_basket(
     return services.delete_from_basket(current_user.user_id, book_id, current_session)
 
 
-@user_router.put("/users/me/basket", tags=["Users"])
+@user_router.put("/users/me/basket", tags=["Basket"])
 async def update_basket_quantity(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
@@ -307,7 +307,7 @@ async def get_user_orders(
     return orders
 
 
-@user_router.patch("/users/me/orders/{order_id}", tags=["Orders"])
+@user_router.patch("/users/me/orders/{order_id}", tags=["Orders Admin"])
 async def update_order_status(
     order_id: int,
     order_status: Literal["pending", "completed", "cancelled"] = Query(

@@ -13,10 +13,38 @@ app = FastAPI(
     description="API to handle operations in a book shop.",
     version="1.0",
     openapi_tags=[
-        {"name": "Users", "description": "Operations related to user accounts."},
+        {"name": "Non-Admin", "description": "Operations for all users."},
         {"name": "Authentication", "description": "Login and token management."},
+        {"name": "Users", "description": "Operations related to user accounts."},
+        {"name": "Basket", "description": "Operations related to baskets."},
+        {"name": "Orders", "description": "Operations related to orders."},
+        {"name": "Wishlist", "description": "Operations related to wishlist."},
         {"name": "Books", "description": "Operations related to books."},
-        {"name": "Genres", "description": "Operations related to books' genres."},
+        {"name": "Admin Only", "description": "Operations only for admins or system."},
+        {
+            "name": "Users Admin",
+            "description": "Operations related to user accounts that can only be performed by admins.",
+        },
+        {
+            "name": "Basket Admin",
+            "description": "Operations related to baskets that can only be performed by admins.",
+        },
+        {
+            "name": "Orders Admin",
+            "description": "Operations related to orders that can only be performed by admins.",
+        },
+        {
+            "name": "Wishlist Admin",
+            "description": "Operations related to wishlist that can only be performed by admins.",
+        },
+        {
+            "name": "Books Admin",
+            "description": "Operations related to books that can only be performed by admins.",
+        },
+        {
+            "name": "Genres Admin",
+            "description": "Operations related to books' genres that can only be performed by admins.",
+        },
     ],
 )
 
