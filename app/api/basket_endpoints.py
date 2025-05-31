@@ -34,17 +34,6 @@ async def get_user_basket(
     return services.get_basket(current_user.user_id, current_session)
 
 
-@basket_router.delete("/users/me/basket", tags=["Basket"])
-async def delete_from_basket(
-    current_user: Annotated[
-        schemas.UserDecode, Depends(services.get_current_active_user)
-    ],
-    book_id: int = Query(..., description="Book id to remove from basket."),
-    current_session: Session = Depends(app_db.get_db),
-):
-    return services.delete_from_basket(current_user.user_id, book_id, current_session)
-
-
 @basket_router.put("/users/me/basket", tags=["Basket"])
 async def update_basket_quantity(
     current_user: Annotated[
@@ -57,3 +46,24 @@ async def update_basket_quantity(
     return services.update_basket_quantity(
         current_user.user_id, book_id, update_data, current_session
     )
+
+
+@basket_router.delete("/users/me/basket", tags=["Basket"])
+async def delete_all_from_basket(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.clear_basket(current_user.user_id, current_session)
+
+
+@basket_router.delete("/users/me/basket/{book_id}", tags=["Basket"])
+async def delete_item_from_basket(
+    current_user: Annotated[
+        schemas.UserDecode, Depends(services.get_current_active_user)
+    ],
+    book_id: int,
+    current_session: Session = Depends(app_db.get_db),
+):
+    return services.delete_from_basket(current_user.user_id, book_id, current_session)

@@ -77,3 +77,4 @@ def update_basket_quantity(
 def clear_basket(user_id: int, current_session: Session):
     current_session.query(app_db.models.BasketItem).filter_by(user_id=user_id).delete()
     current_session.commit()
+    return {"message": "Basket cleared."}
