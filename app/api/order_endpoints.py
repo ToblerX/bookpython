@@ -86,6 +86,18 @@ async def get_user_orders(
     return orders
 
 
+@order_router.get("/users/{user_id}/orders", tags=["Orders Admin"])
+async def get_user_orders_by_id(
+    user_id: int,
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed
+    orders = services.get_user_orders(user_id, current_session)
+    return orders
+
+
 @order_router.patch("/users/me/orders/{order_id}", tags=["Orders Admin"])
 async def update_order_status(
     order_id: int,
