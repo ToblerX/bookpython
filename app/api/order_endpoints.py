@@ -1,6 +1,7 @@
 from typing import Annotated, Literal
 
 from fastapi import Depends, Query, Body, APIRouter
+from fastapi.background import BackgroundTasks
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
@@ -16,6 +17,7 @@ async def create_order(
     current_user: Annotated[
         schemas.UserDecode, Depends(services.get_current_active_user)
     ],
+    bg_tasks: BackgroundTasks,
     delivery_method: Literal["courier", "pickup", "parcel_locker"] = Query(
         ..., description="Delivery method: 'courier', 'pickup', or 'parcel_locker'"
     ),
@@ -62,6 +64,8 @@ async def create_order(
 
     order = services.create_order(order_data, current_session)
     services.clear_basket(current_user.user_id, current_session)
+
+    bg_tasks.add_task(services.send_order_information_email, user_full.email)
 
     return JSONResponse(
         status_code=201,

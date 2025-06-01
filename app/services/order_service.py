@@ -1,6 +1,7 @@
+from pydantic import EmailStr
 from sqlalchemy.orm import Session, selectinload
 
-from .. import schemas, errors
+from .. import schemas, errors, config, mail
 from ..db import models
 from ..db.models import Order, Book
 from ..schemas import OrderCreate
@@ -84,3 +85,21 @@ def set_order_status(order_id: int, status: str, current_session: Session):
     current_session.commit()
     current_session.refresh(order)
     return order
+
+
+async def send_order_information_email(user_email: EmailStr):
+
+    html_message = f"""
+            <h1>You order has been placed successfully!</h1>\
+            <p>Thank you for choosing bookpython!</p>
+            """
+
+    message = mail.create_message(
+        recipients=[user_email],
+        subject="New Order",
+        body=html_message,
+    )
+
+    await mail.mail_engine.send_message(message)
+
+    return {"status": "Email sent successfully"}
