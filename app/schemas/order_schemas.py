@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List
 from datetime import datetime
-from . import BookCreate
+from . import BookCreateId
 
 
 class OrderItemCreate(BaseModel):
@@ -10,7 +10,7 @@ class OrderItemCreate(BaseModel):
 
 
 class OrderItemRead(BaseModel):
-    book: BookCreate
+    book: BookCreateId
     quantity: int
 
     class Config:

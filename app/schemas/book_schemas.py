@@ -67,6 +67,10 @@ class BookCreate(BookBase):
     supply: int = 0
 
 
+class BookCreateId(BookCreate):
+    book_id: int
+
+
 class BookUpdate(BookBase):
     pass
 

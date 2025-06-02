@@ -93,14 +93,15 @@ async def send_order_information_email(
 
     items_str = ""
     for item in items:
-        items_str += f"{item.book.book_name} x {item.quantity}\n"
+        item_link = f"http://{config.DOMAIN}/books/{item.book.book_id}"
+        items_str += f"""<p><a href="{item_link}">{item.book.book_name}</a> x {item.quantity}</p>\n"""
 
     html_message = f"""
-            <h1>You order has been placed successfully!</h1>
+            <h1>Your order has been placed successfully!</h1>
             <p>Thank you for choosing bookpython!</p>
             <p>Order id: {order_id}</p>
             <p>Total cost: {total_cost}</p>
-            <h2>The list of items:</h2>
+            <h3>The list of items:</h3>
             {items_str}
             """
 
