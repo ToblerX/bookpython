@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session, selectinload
 from .. import schemas, errors, config, mail
 from ..db import models
 from ..db.models import Order, Book
-from ..schemas import OrderCreate
+from ..schemas import OrderCreate, OrderItemRead
 from sqlalchemy import insert
 
 
@@ -87,11 +87,21 @@ def set_order_status(order_id: int, status: str, current_session: Session):
     return order
 
 
-async def send_order_information_email(user_email: EmailStr):
+async def send_order_information_email(
+    user_email: EmailStr, order_id: int, total_cost: float, items: list[OrderItemRead]
+):
+
+    items_str = ""
+    for item in items:
+        items_str += f"{item.book.book_name} x {item.quantity}\n"
 
     html_message = f"""
-            <h1>You order has been placed successfully!</h1>\
+            <h1>You order has been placed successfully!</h1>
             <p>Thank you for choosing bookpython!</p>
+            <p>Order id: {order_id}</p>
+            <p>Total cost: {total_cost}</p>
+            <h2>The list of items:</h2>
+            {items_str}
             """
 
     message = mail.create_message(

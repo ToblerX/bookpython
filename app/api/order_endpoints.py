@@ -65,7 +65,17 @@ async def create_order(
     order = services.create_order(order_data, current_session)
     services.clear_basket(current_user.user_id, current_session)
 
-    bg_tasks.add_task(services.send_order_information_email, user_full.email)
+    order_items = current_session.query(app_db.models.OrderItem).filter(
+        app_db.models.OrderItem.order_id == order.order_id
+    )
+
+    bg_tasks.add_task(
+        services.send_order_information_email,
+        user_full.email,
+        order.order_id,
+        total_price,
+        order_items,
+    )
 
     return JSONResponse(
         status_code=201,
