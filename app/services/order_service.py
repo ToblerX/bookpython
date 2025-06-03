@@ -100,9 +100,8 @@ async def send_order_information_email(
         <div style="margin-bottom: 15px;">
             <a href="{item_link}" style="text-decoration: none; color: inherit;">
                 <img src="{cover_url}" width="100" style="display: block; border: 1px solid #ccc; margin-bottom: 5px;" />
-                <strong>{item.book.book_name}</strong>
+                <strong>{item.book.book_name} x {item.quantity} x {item.book.book_price}$</strong>
             </a>
-            <p>Quantity: {item.quantity}</p>
         </div>
         """
 
@@ -110,7 +109,7 @@ async def send_order_information_email(
             <h1>Your order has been placed successfully!</h1>
             <p>Thank you for choosing bookpython!</p>
             <p>Order id: {order_id}</p>
-            <p>Total cost: {total_cost}</p>
+            <p>Total cost: {total_cost}$</p>
             <h3>The list of items:</h3>
             {items_str}
             """
