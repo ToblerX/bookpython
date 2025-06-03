@@ -1,3 +1,5 @@
+import time
+
 from pydantic import EmailStr
 from sqlalchemy.orm import Session, selectinload
 
@@ -90,11 +92,19 @@ def set_order_status(order_id: int, status: str, current_session: Session):
 async def send_order_information_email(
     user_email: EmailStr, order_id: int, total_cost: float, items: list[OrderItemRead]
 ):
-
     items_str = ""
     for item in items:
         item_link = f"http://{config.DOMAIN}/books/{item.book.book_id}"
-        items_str += f"""<p><a href="{item_link}">{item.book.book_name}</a> x {item.quantity}</p>\n"""
+        cover_url = f"http://{config.DOMAIN}/books/{item.book.book_id}/cover?ts={int(time.time())}"
+        items_str += f"""
+        <div style="margin-bottom: 15px;">
+            <a href="{item_link}" style="text-decoration: none; color: inherit;">
+                <img src="{cover_url}" width="100" style="display: block; border: 1px solid #ccc; margin-bottom: 5px;" />
+                <strong>{item.book.book_name}</strong>
+            </a>
+            <p>Quantity: {item.quantity}</p>
+        </div>
+        """
 
     html_message = f"""
             <h1>Your order has been placed successfully!</h1>

@@ -67,8 +67,9 @@ class BookCreate(BookBase):
     supply: int = 0
 
 
-class BookCreateId(BookCreate):
+class BookHTML(BookCreate):
     book_id: int
+    book_cover_path: str
 
 
 class BookUpdate(BookBase):

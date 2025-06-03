@@ -1,7 +1,13 @@
+import mimetypes
+from pathlib import Path
+
 from sqlalchemy import asc, desc, select
 from sqlalchemy.orm import Session, joinedload
 from fastapi import Depends
 from typing import Annotated
+
+from starlette.responses import FileResponse
+
 from app import db as app_db
 from app import schemas, config, errors
 from PIL import Image
@@ -253,6 +259,30 @@ def get_cover_path_for_book(book_id: int, current_session: Session):
     if not book:
         raise errors.BookNotFound()
     return book.book_cover_path
+
+
+def get_cover_image_for_book(book_id: int, current_session: Session):
+    book = (
+        current_session.query(app_db.models.Book)
+        .filter(app_db.models.Book.book_id == book_id)
+        .first()
+    )
+    if not book:
+        raise errors.BookNotFound()
+
+    image_path = Path(book.book_cover_path)
+    if not image_path.is_file():
+        raise errors.ImageNotFound  # optional custom error
+
+    mime_type, _ = mimetypes.guess_type(str(image_path))
+    if not mime_type:
+        mime_type = "application/octet-stream"  # fallback
+
+    return FileResponse(
+        path=str(image_path),
+        media_type=mime_type,
+        filename=image_path.name,
+    )
 
 
 def update_cover_for_book(contents: bytes, book_id: int, current_session: Session):

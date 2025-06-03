@@ -147,6 +147,17 @@ async def get_cover_for_book(
     book_id: int = Path(..., description="ID of the book"),
     current_session: Session = Depends(app_db.get_db),
 ):
+    return services.get_cover_image_for_book(book_id, current_session)
+
+
+@book_router.get("/books/{book_id}/cover_path", tags=["Books Admin"])
+async def get_cover_for_book(
+    current_user: schemas.UserOut = Depends(services.get_current_active_user),
+    book_id: int = Path(..., description="ID of the book"),
+    current_session: Session = Depends(app_db.get_db),
+):
+    if current_user.role != "admin":
+        raise errors.OnlyAdminsAllowed()
     return services.get_cover_path_for_book(book_id, current_session)
 
 
