@@ -100,7 +100,7 @@ async def get_user_orders(
     return orders
 
 
-@order_router.get("/users/{user_id}/orders", tags=["Orders Admin"])
+@order_router.get("/admin/users/{user_id}/orders", tags=["Orders Admin"])
 async def get_user_orders_by_id(
     user_id: int,
     current_user: schemas.UserOut = Depends(services.get_current_active_user),
@@ -112,7 +112,7 @@ async def get_user_orders_by_id(
     return orders
 
 
-@order_router.patch("/users/me/orders/{order_id}", tags=["Orders Admin"])
+@order_router.patch("/admin/orders/{order_id}", tags=["Orders Admin"])
 async def update_order_status(
     order_id: int,
     order_status: Literal["pending", "completed", "cancelled"] = Query(

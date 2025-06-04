@@ -57,7 +57,9 @@ async def verify_user_account(
     )
 
 
-@user_router.get("/users", tags=["Users Admin"], response_model=List[schemas.UserModel])
+@user_router.get(
+    "/admin/users", tags=["Users Admin"], response_model=List[schemas.UserModel]
+)
 async def get_users(
     current_user: schemas.UserOut = Depends(services.get_current_active_user),
     current_session: Session = Depends(app_db.get_db),

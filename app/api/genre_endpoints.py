@@ -8,7 +8,9 @@ from app import services, schemas
 genre_router = APIRouter()
 
 
-@genre_router.post("/genres", tags=["Genres Admin"], response_model=schemas.GenreModel)
+@genre_router.post(
+    "/admin/genres", tags=["Genres Admin"], response_model=schemas.GenreModel
+)
 async def create_genre(
     genre: schemas.GenreCreate,
     db: Session = Depends(app_db.get_db),
@@ -27,7 +29,7 @@ async def create_genre(
 
 
 @genre_router.get(
-    "/genres", tags=["Genres Admin"], response_model=List[schemas.GenreModel]
+    "/admin/genres", tags=["Genres Admin"], response_model=List[schemas.GenreModel]
 )
 async def get_genres(
     db: Session = Depends(app_db.get_db),
@@ -38,7 +40,7 @@ async def get_genres(
     return services.get_genres(db)
 
 
-@genre_router.put("/genres/{genre_id}", tags=["Genres Admin"])
+@genre_router.put("/admin/genres/{genre_id}", tags=["Genres Admin"])
 async def update_genre(
     genre_data: schemas.GenreUpdate,
     genre_id: int = Path(..., description="ID of genre to update."),
@@ -51,7 +53,7 @@ async def update_genre(
 
 
 @genre_router.delete(
-    "/genres/{genre_id}", tags=["Genres Admin"], response_model=schemas.GenreModel
+    "/admin/genres/{genre_id}", tags=["Genres Admin"], response_model=schemas.GenreModel
 )
 async def delete_genre_by_id(
     genre_id: int = Path(..., description="ID of genre to delete."),
