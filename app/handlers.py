@@ -48,7 +48,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.UserAlreadyExists,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "User account already exists.",
                 "error_code": "user_exists",
@@ -58,7 +58,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.EmailAlreadyExists,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "Email account already exists.",
                 "error_code": "email_exists",
@@ -68,7 +68,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectUsernameLength,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"Username must be between {config.USERNAME_MIN} and {config.USERNAME_MAX} characters.",
                 "error_code": "incorrect_username_length",
@@ -78,7 +78,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectPasswordLength,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"Password must contain from {config.PASSWORD_MIN} to {config.PASSWORD_MAX} characters.",
                 "error_code": "incorrect_password_length",
@@ -88,7 +88,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectPasswordFormat,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "Password must contain at least one uppercase letter and one special character.",
                 "error_code": "incorrect_password_format",
@@ -98,7 +98,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.WrongCredentials,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "You provided wrong credentials.",
                 "error_code": "wrong_credentials",
@@ -158,7 +158,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.BookAlreadyExists,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "This book already exists.",
                 "error_code": "book_already_exists",
@@ -168,7 +168,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectBookNameLength,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"The book name must be between {config.BOOK_NAME_MIN} and {config.BOOK_NAME_MAX} characters long.",
                 "error_code": "incorrect_bookname_length",
@@ -178,7 +178,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectBookDescriptionLength,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"The book description must be between {config.BOOK_DESC_MIN} and {config.BOOK_DESC_MAX} characters long.",
                 "error_code": "incorrect_book_description_length",
@@ -188,7 +188,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.InvalidBookPrice,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"The book price must be higher than 0.",
                 "error_code": "invalid_book_price",
@@ -198,7 +198,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.InvalidBookSupply,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"The book supply can't be lower than 0.",
                 "error_code": "invalid_book_supply",
@@ -248,7 +248,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectGenreName,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "Genre name mustn't contain any special characters.",
                 "error_code": "incorrect_genre_name",
@@ -258,7 +258,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.IncorrectGenreLength,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": f"Genre name must be from {config.GENRE_NAME_MIN} to {config.GENRE_NAME_MAX} characters long.",
                 "error_code": "incorrect_genre_length",
@@ -268,7 +268,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.GenreAlreadyAssociated,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "Genre already associated.",
                 "error_code": "genre_already_associated",
@@ -298,7 +298,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.FileMustBeImage,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "The provided file is not an image.",
                 "error_code": "file_not_image",
@@ -308,7 +308,7 @@ def register_exception_handlers(app):
     app.add_exception_handler(
         errors.CantDeleteDefaultCover,
         errors.create_exception_handler(
-            status.HTTP_403_FORBIDDEN,
+            status.HTTP_400_BAD_REQUEST,
             initial_detail={
                 "message": "Cannot delete default cover.",
                 "error_code": "cannot_delete_default_cover",
