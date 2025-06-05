@@ -6,7 +6,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from starlette.responses import JSONResponse
 
-from .. import schemas, services, config, errors
+from .. import schemas, services, config
+from ..exceptions import errors
 from .. import db as app_db
 
 user_router = APIRouter()

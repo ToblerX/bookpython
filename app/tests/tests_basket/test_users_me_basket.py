@@ -2,7 +2,7 @@ from unittest.mock import patch
 import pytest
 from starlette import status
 
-from app import services, errors
+from app import services
 from .test_conf import (
     override_get_current_active_user_user,
     client,

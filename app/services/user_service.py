@@ -7,7 +7,8 @@ from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from typing import Annotated
 
-from .. import schemas, config, mail, errors
+from .. import schemas, config, mail
+from ..exceptions import errors
 from .. import db as app_db
 import jwt
 

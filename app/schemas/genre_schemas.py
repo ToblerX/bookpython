@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
-from app import errors, config
+from app import config
+from app.exceptions import errors
 import re
 
 

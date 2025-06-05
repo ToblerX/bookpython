@@ -1,7 +1,8 @@
 from typing import Optional, List
 from pydantic import BaseModel, EmailStr, field_validator
 import datetime, re
-from app import errors, config, schemas
+from app import config, schemas
+from app.exceptions import errors
 
 
 class UserModel(BaseModel):

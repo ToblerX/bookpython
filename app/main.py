@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from . import api, handlers, middleware
+from . import api, middleware
+from .exceptions import handlers
 import app.db as database
 from .init_db import init_db
 

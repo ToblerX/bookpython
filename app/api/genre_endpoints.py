@@ -2,7 +2,8 @@ from typing import List
 from fastapi import APIRouter
 from fastapi.params import Depends, Path
 from sqlalchemy.orm import Session
-from app import db as app_db, errors
+from app import db as app_db
+from app.exceptions import errors
 from app import services, schemas
 
 genre_router = APIRouter()

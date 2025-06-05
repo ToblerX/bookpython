@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from .. import schemas, errors
+from .. import schemas
+from ..exceptions import errors
 from .. import db as app_db
 
 

@@ -9,7 +9,8 @@ from typing import Annotated
 from starlette.responses import FileResponse
 
 from app import db as app_db
-from app import schemas, config, errors
+from app import schemas, config
+from app.exceptions import errors
 from PIL import Image
 import io
 import os

@@ -3,7 +3,8 @@ import time
 from pydantic import EmailStr
 from sqlalchemy.orm import Session, selectinload
 
-from .. import schemas, errors, config, mail
+from .. import config, mail
+from ..exceptions import errors
 from ..db import models
 from ..db.models import Order, Book
 from ..schemas import OrderCreate, OrderItemRead

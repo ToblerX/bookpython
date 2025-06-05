@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import JSONResponse
 
-from .. import errors
+from ..exceptions import errors
 from .. import db as app_db
 
 

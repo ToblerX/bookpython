@@ -3,7 +3,8 @@ from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from .genre_schemas import GenreCreate
 
-from .. import errors, config
+from .. import config
+from ..exceptions import errors
 
 
 class BookModel(BaseModel):

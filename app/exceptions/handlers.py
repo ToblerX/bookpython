@@ -1,6 +1,7 @@
 from fastapi import status
 from fastapi.responses import JSONResponse
-from . import errors, config
+from app import config
+from app.exceptions import errors
 
 
 def register_exception_handlers(app):
