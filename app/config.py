@@ -7,6 +7,7 @@ from fastapi.security import OAuth2PasswordBearer
 
 load_dotenv()
 
+
 # DATABASE INITIALIZATION
 DATABASE_URL = os.getenv("DATABASE_URL")
 GENRES = [
@@ -31,11 +32,12 @@ GENRES = [
     "Science",
     "Travel",
 ]
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # IMAGE PATHS
 IMAGES_BOOKS_PATH = "app/static/images/books/"
 DEFAULT_COVER_PATH = IMAGES_BOOKS_PATH + "cover_not_available.jpg"
+
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # USERS AUTH
 PWD_CONTEXT = CryptContext(schemes=["bcrypt"], deprecated="auto")

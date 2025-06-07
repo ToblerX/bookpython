@@ -68,6 +68,11 @@ class BookCreate(BookBase):
     supply: int = 0
 
 
+class BookInit(BookCreate):
+    book_id: int
+    book_cover_path: str
+
+
 class BookHTML(BookCreate):
     book_id: int
     book_cover_path: str
