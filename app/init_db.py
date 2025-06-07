@@ -1,4 +1,5 @@
 import os
+import requests
 
 from sqlalchemy import select, func
 from . import db as app_db, schemas
@@ -18,6 +19,7 @@ BOOKS = [
             ),
         ),
         [1, 3, 6],
+        "https://m.media-amazon.com/images/I/714wbWkDOUL._AC_UF1000,1000_QL80_.jpg",
     )
 ]
 
@@ -63,9 +65,13 @@ def seed_books():
             .filter_by(book_name=book[0].book_name)
             .first()
         ):
-            os.mkdir(os.path.join(config.IMAGES_BOOKS_PATH, book[0].book_name))
+            book_img_dir = os.path.join(config.IMAGES_BOOKS_PATH, book[0].book_name)
+            os.mkdir(book_img_dir)
             new_book = app_db.models.Book(**book[0].dict())
             current_session.add(new_book)
+            response = requests.get(book[2])
+            with open(f"{book_img_dir}/cover.jpg", "wb") as f:
+                f.write(response.content)
             current_session.commit()
             for genre_id in book[1]:
                 stmt = app_db.models.book_genres.insert().values(
