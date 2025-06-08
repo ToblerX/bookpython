@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from . import api, middleware
 from .exceptions import handlers
 import app.db as database
-from .init_db import init_db
+from app.db.initialization.init_db import init_db
 
 ## === DB INIT ===
 database.Base.metadata.create_all(bind=database.engine)

@@ -8,30 +8,8 @@ from fastapi.security import OAuth2PasswordBearer
 load_dotenv()
 
 
-# DATABASE INITIALIZATION
+# DATABASE
 DATABASE_URL = os.getenv("DATABASE_URL")
-GENRES = [
-    "Fiction",
-    "Non-fiction",
-    "Mystery",
-    "Fantasy",
-    "Science Fiction",
-    "Romance",
-    "Historical Fiction",
-    "Biography",
-    "Horror",
-    "Young Adult",
-    "Children’s Literature",
-    "Self-Help",
-    "Graphic Novels",
-    "Poetry",
-    "Classics",
-    "Adventure",
-    "Literary Fiction",
-    "Religion",
-    "Science",
-    "Travel",
-]
 
 # IMAGE PATHS
 IMAGES_BOOKS_PATH = "app/static/images/books/"
