@@ -5,21 +5,24 @@ from .book_seeding import seed_books
 from .genre_seeding import seed_genres
 
 
-def init_db():
+def init_db(
+    create_admin: bool = True, init_genres: bool = True, init_books: bool = True
+):
     with app_db.database.LocalSession() as session:
         count = session.execute(
             select(func.count()).select_from(app_db.models.Genre)
         ).scalar()
-        if count == 0:
+        if count == 0 and init_genres:
             seed_genres()
             print("✅  Genres seeded.")
         count = session.execute(
             select(func.count()).select_from(app_db.models.Book)
         ).scalar()
-        if count == 0:
+        if count == 0 and init_books:
             seed_books()
             print("✅  Books seeded.")
-        create_admin_user()
+        if create_admin:
+            create_admin_user()
 
 
 def create_admin_user():
@@ -61,3 +64,6 @@ def create_admin_user():
 if __name__ == "__main__":
     init_db()
     print("✅ DB initialized.")
+
+# TRUNCATE TABLE users, genres, books, user_books, book_genres, baskets, orders, order_items RESTART IDENTITY CASCADE;
+# DROP TABLE users, genres, user_books, book_genres, books, baskets, orders, order_items

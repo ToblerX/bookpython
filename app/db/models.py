@@ -127,7 +127,3 @@ class Order(database.Base):
     order_items = relationship(
         "OrderItem", back_populates="order", cascade="all, delete-orphan"
     )
-
-
-# TRUNCATE TABLE users, genres, books, user_books, book_genres, baskets RESTART IDENTITY CASCADE;
-# DROP TABLE users, genres, user_books, book_genres, books, baskets

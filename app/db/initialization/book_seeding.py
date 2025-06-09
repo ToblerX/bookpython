@@ -19,7 +19,37 @@ BOOKS = [
         ),
         [1, 3, 6],
         "https://m.media-amazon.com/images/I/714wbWkDOUL._AC_UF1000,1000_QL80_.jpg",
-    )
+    ),
+    (
+        schemas.BookInit(
+            book_id=1,
+            book_name="Essentialism",
+            book_author="Greg McKeown",
+            book_description="'Essentialism: The Disciplined Pursuit of Less' by Greg McKeown is a book about a disciplined approach to determining your highest contribution and then making it effortless. It's not about doing more, but about doing the right things, focusing on the essential and eliminating the trivial. ",
+            book_price=10,
+            supply=100,
+            book_cover_path=os.path.join(
+                config.IMAGES_BOOKS_PATH, "Essentialism", "cover.jpg"
+            ),
+        ),
+        [2, 12, 19],
+        "https://ecsmedia.pl/c/essentialism-b-iext178892106.jpg",
+    ),
+    (
+        schemas.BookInit(
+            book_id=2,
+            book_name="Learning How to Learn",
+            book_author="Barbara Oakley, Terrence Sejnowski, Alistair McConville",
+            book_description="A surprisingly simple way for students to master any subject--based on one of the world's most popular online courses and the bestselling book",
+            book_price=12,
+            supply=100,
+            book_cover_path=os.path.join(
+                config.IMAGES_BOOKS_PATH, "Learning How to Learn", "cover.jpg"
+            ),
+        ),
+        [2, 10, 11, 12, 19],
+        "https://m.media-amazon.com/images/I/71CHz550NjL._AC_UF1000,1000_QL80_.jpg",
+    ),
 ]
 
 
